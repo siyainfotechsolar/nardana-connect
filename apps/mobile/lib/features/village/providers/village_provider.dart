@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:nardana_connect/core/services/notification_service.dart';
 
 class VillageItem {
   final String id;
@@ -48,9 +49,18 @@ class VillageNotifier extends StateNotifier<VillageItem> {
   }
 
   Future<void> selectVillage(VillageItem village) async {
+    final oldVillage = state;
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('selected_village_id', village.id);
     state = village;
+
+    // Update FCM topic subscriptions
+    if (oldVillage.id != 'all' && oldVillage.id != village.id) {
+      await NotificationService.instance.unsubscribeFromVillage(oldVillage.nameEn);
+    }
+    if (village.id != 'all') {
+      await NotificationService.instance.subscribeToVillage(village.nameEn);
+    }
   }
 }
 

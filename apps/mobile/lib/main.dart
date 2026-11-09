@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/localization/app_localizations.dart';
 import 'core/localization/locale_provider.dart';
 import 'core/router/app_router.dart';
+import 'core/services/notification_service.dart';
 import 'core/services/supabase_service.dart';
 import 'core/theme/app_theme.dart';
 
@@ -12,6 +13,13 @@ Future<void> main() async {
 
   // Initialize Supabase client
   await SupabaseService.initialize();
+
+  // Initialize Firebase Cloud Messaging
+  try {
+    await NotificationService.instance.initialize();
+  } catch (e) {
+    debugPrint('Firebase Notification initialization skipped or failed: $e');
+  }
 
   runApp(
     const ProviderScope(

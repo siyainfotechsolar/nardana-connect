@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "522297383375",
+    "project_id": "village-seva-2026",
+    "storage_bucket": "village-seva-2026.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:522297383375:android:bafa677ee00ae58fd09aba",
+        "android_client_info": {
+          "package_name": "in.nardana.connect.nardana_connect"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZyB30Zy5P_ElMDL4bsPs6h5gUu96p9wo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
