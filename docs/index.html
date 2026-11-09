@@ -3,464 +3,470 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>नरडाणा कनेक्ट | Nardana Connect - आपलं गाव, आपली डिजिटल ओळख!</title>
-  <meta name="description" content="नरडाणा आणि परिसरातील गावांसाठी 100% मोफत डिजिटल कम्युनिटी ॲप. स्थानिक सेवा, दुकाने, नोकऱ्या, खरेदी-विक्री आणि ग्रामपंचायत सूचना.">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Nardana Connect - Official Android App &amp; Community Portal</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@300;400;600;700;800&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Mukta:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #123B67;
-      --primary-dark: #0c2744;
-      --secondary: #16A36A;
-      --secondary-dark: #107a4f;
-      --accent: #F3B83F;
-      --bg: #F8FAFC;
-      --card-bg: #FFFFFF;
-      --text: #1E293B;
-      --text-muted: #64748B;
-      --border: #E2E8F0;
+      --bg-gradient: linear-gradient(180deg, #091728 0%, #123B67 45%, #0B192C 100%);
+      --card-bg: #ffffff;
+      --card-border: rgba(226, 232, 240, 0.8);
+      --primary: #16A36A;
+      --primary-hover: #107a4f;
+      --primary-light: #ecfdf5;
+      --primary-border: #a7f3d0;
+      --accent-gold: #F3B83F;
+      --brand-blue: #123B67;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --font: 'Plus Jakarta Sans', 'Mukta', -apple-system, BlinkMacSystemFont, sans-serif;
     }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
+
     body {
-      font-family: 'Mukta', 'Poppins', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
+      font-family: var(--font);
+      background: var(--bg-gradient);
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 16px 60px;
     }
-    header {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-      color: #fff;
-      padding: 2.5rem 1.5rem 3.5rem;
+
+    /* Top App Branding */
+    .hero {
       text-align: center;
-      position: relative;
-      overflow: hidden;
+      max-width: 620px;
+      margin-bottom: 28px;
     }
-    header::after {
-      content: '';
-      position: absolute;
-      bottom: -30px;
-      left: 0;
-      right: 0;
-      height: 60px;
-      background: var(--bg);
-      border-radius: 50% 50% 0 0;
+
+    .app-icon {
+      width: 96px;
+      height: 96px;
+      background: #ffffff;
+      border-radius: 26px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+      margin-bottom: 18px;
+      border: 3px solid var(--accent-gold);
+      transition: transform 0.2s ease;
     }
+
+    .app-icon:hover {
+      transform: scale(1.04);
+    }
+
+    .app-icon svg {
+      width: 56px;
+      height: 56px;
+      fill: var(--brand-blue);
+    }
+
+    .app-title {
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .app-tagline {
+      font-size: 18px;
+      color: var(--accent-gold);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .app-subtitle {
+      font-size: 14px;
+      color: #cbd5e1;
+      font-weight: 500;
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+
+    .village-strip {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+
+    .village-pill {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #f1f5f9;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .badges {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
     .badge {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-version {
+      background: rgba(255, 255, 255, 0.12);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .badge-status {
+      background: rgba(22, 163, 106, 0.25);
+      color: #4ade80;
+      border: 1px solid rgba(22, 163, 106, 0.45);
+    }
+
+    .badge-free {
       background: rgba(243, 184, 63, 0.2);
-      border: 1px solid var(--accent);
-      color: var(--accent);
-      padding: 0.35rem 1rem;
-      border-radius: 50px;
-      font-size: 0.95rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
+      color: var(--accent-gold);
+      border: 1px solid rgba(243, 184, 63, 0.4);
     }
-    .app-icon {
-      width: 90px;
-      height: 90px;
-      background: #ffffff;
-      border-radius: 22px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-      margin-bottom: 1.25rem;
-      border: 3px solid var(--accent);
-    }
-    .app-icon svg {
-      width: 52px;
-      height: 52px;
-      fill: var(--primary);
-    }
-    h1 {
-      font-size: 2.25rem;
-      font-weight: 800;
-      margin-bottom: 0.5rem;
-      letter-spacing: -0.5px;
-    }
-    .tagline {
-      font-size: 1.25rem;
-      color: #E2E8F0;
-      font-weight: 600;
-      margin-bottom: 1rem;
-    }
-    .coverage-pill {
-      display: inline-flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0.4rem;
-      max-width: 650px;
-      margin: 0 auto;
-    }
-    .coverage-pill span {
-      background: rgba(255,255,255,0.15);
-      color: #fff;
-      padding: 0.2rem 0.75rem;
-      border-radius: 20px;
-      font-size: 0.85rem;
-    }
-    .container {
-      max-width: 960px;
-      margin: -1.5rem auto 3rem;
-      padding: 0 1.25rem;
-      position: relative;
-      z-index: 10;
-    }
-    .download-card {
+
+    /* Main Download Card */
+    .release-card {
       background: var(--card-bg);
-      border-radius: 20px;
-      box-shadow: 0 15px 35px rgba(18, 59, 103, 0.08);
-      border: 1px solid var(--border);
-      padding: 2.25rem 1.75rem;
-      text-align: center;
-      margin-bottom: 2.5rem;
+      color: var(--text-main);
+      width: 100%;
+      max-width: 560px;
+      border-radius: 22px;
+      padding: 26px 24px 30px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.55);
+      border: 1px solid rgba(255, 255, 255, 0.08);
     }
-    .download-actions {
+
+    .btn-download-primary {
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-    @media (min-width: 640px) {
-      .download-actions {
-        flex-direction: row;
-        justify-content: center;
-      }
-    }
-    .btn {
-      display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.75rem;
+      gap: 10px;
+      width: 100%;
+      background: var(--primary);
+      color: #ffffff;
+      padding: 16px 20px;
+      border-radius: 12px;
+      font-size: 16px;
       font-weight: 700;
-      font-size: 1.15rem;
-      padding: 0.95rem 2rem;
-      border-radius: 14px;
       text-decoration: none;
       transition: all 0.2s ease;
+      box-shadow: 0 10px 20px -5px rgba(22, 163, 106, 0.45);
       cursor: pointer;
+    }
+
+    .btn-download-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 12px 22px -5px rgba(22, 163, 106, 0.55);
+    }
+
+    .btn-download-secondary {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
       width: 100%;
-      max-width: 340px;
+      background: #f8fafc;
+      color: #123B67;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      border: 1px solid #cbd5e1;
+      margin-top: 10px;
+      transition: background 0.15s ease;
     }
-    .btn-primary {
-      background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
-      color: #ffffff;
-      box-shadow: 0 6px 20px rgba(22, 163, 106, 0.35);
+
+    .btn-download-secondary:hover {
+      background: #f1f5f9;
     }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(22, 163, 106, 0.45);
-    }
-    .btn-secondary {
-      background: #ffffff;
-      color: var(--primary);
-      border: 2px solid var(--primary);
-    }
-    .btn-secondary:hover {
-      background: #F1F5F9;
-      transform: translateY(-2px);
-    }
-    .app-meta {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      margin-top: 1.25rem;
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      flex-wrap: wrap;
-    }
-    .meta-item {
-      display: flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-    .meta-item strong {
-      color: var(--text);
-    }
-    .features-grid {
+
+    /* Metadata Grid */
+    .meta-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1.25rem;
-      margin-bottom: 2.5rem;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 20px;
     }
-    .feature-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 1.5rem;
-      transition: transform 0.2s ease;
-    }
-    .feature-card:hover {
-      transform: translateY(-3px);
-      border-color: var(--secondary);
-    }
-    .feature-icon {
-      width: 48px;
-      height: 48px;
+
+    .meta-box {
+      background: #f8fafc;
       border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      margin-bottom: 0.9rem;
+      padding: 14px;
+      border: 1px solid #f1f5f9;
     }
-    .feature-card h3 {
-      font-size: 1.15rem;
+
+    .meta-label {
+      font-size: 11px;
       font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 0.35rem;
-    }
-    .feature-card p {
-      font-size: 0.95rem;
+      text-transform: uppercase;
       color: var(--text-muted);
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
     }
-    .steps-card {
-      background: #FFFFFF;
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 2rem 1.75rem;
-      margin-bottom: 2.5rem;
+
+    .meta-value {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
     }
-    .steps-card h2 {
-      color: var(--primary);
-      font-size: 1.45rem;
-      margin-bottom: 1.25rem;
+
+    /* Highlights Section */
+    .changelog-section {
+      margin-top: 22px;
+      padding-top: 18px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    .changelog-title {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #334155;
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 6px;
     }
-    .steps-list {
+
+    .changelog-list {
       list-style: none;
-      display: grid;
-      gap: 1rem;
     }
-    .step-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 1rem;
+
+    .changelog-list li {
+      position: relative;
+      padding-left: 24px;
+      margin-bottom: 9px;
+      font-size: 13.5px;
+      color: #475569;
+      line-height: 1.5;
     }
-    .step-num {
-      width: 32px;
-      height: 32px;
-      background: var(--primary);
-      color: #fff;
-      font-weight: 700;
-      border-radius: 50%;
+
+    .changelog-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      top: 0;
+      color: var(--primary);
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    /* QR Code Box */
+    .qr-container {
+      margin-top: 20px;
+      padding: 16px;
+      background: #f8fafc;
+      border-radius: 14px;
+      border: 1px dashed #cbd5e1;
       display: flex;
       align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 0.95rem;
+      gap: 16px;
     }
-    .step-text h4 {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: var(--text);
+
+    .qr-container img {
+      width: 90px;
+      height: 90px;
+      background: #fff;
+      padding: 4px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
     }
-    .step-text p {
-      font-size: 0.9rem;
-      color: var(--text-muted);
+
+    .qr-text {
+      font-size: 13px;
+      color: #334155;
+      line-height: 1.4;
     }
+
+    .qr-text strong {
+      color: var(--brand-blue);
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    /* Install Instructions */
+    .instructions {
+      margin-top: 20px;
+      background: var(--primary-light);
+      border: 1px solid var(--primary-border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-size: 12.5px;
+      color: #065f46;
+      line-height: 1.6;
+    }
+
+    .instructions strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 13px;
+    }
+
+    /* Footer */
     footer {
-      background: #0c2744;
-      color: #94A3B8;
+      margin-top: 32px;
       text-align: center;
-      padding: 2rem 1rem;
-      font-size: 0.9rem;
+      color: #94a3b8;
+      font-size: 12.5px;
     }
-    footer p {
-      margin-bottom: 0.35rem;
-    }
+
     footer a {
-      color: var(--accent);
+      color: var(--accent-gold);
       text-decoration: none;
     }
-    .qr-box {
-      margin-top: 1.75rem;
-      padding-top: 1.75rem;
-      border-top: 1px dashed var(--border);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.75rem;
-    }
-    .qr-code-img {
-      width: 140px;
-      height: 140px;
-      background: #fff;
-      padding: 6px;
-      border-radius: 12px;
-      border: 2px solid var(--border);
+
+    footer a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
 
-  <header>
+  <!-- Top Hero Header -->
+  <div class="hero">
     <div class="app-icon">
       <svg viewBox="0 0 24 24">
         <path d="M12 2L2 9.5V20C2 21.1 2.9 22 4 22H20C21.1 22 22 21.1 22 20V9.5L12 2ZM12 4.5L19 9.8V20H5V9.8L12 4.5ZM12 12C10.9 12 10 12.9 10 14C10 15.1 10.9 16 12 16C13.1 16 14 15.1 14 14C14 12.9 13.1 12 12 12Z"/>
       </svg>
     </div>
-    <div class="badge">१००% मोफत ग्रामीण डिजिटल सेवा</div>
-    <h1>NARDANA CONNECT</h1>
-    <div class="tagline">आपलं गाव, आपली डिजिटल ओळख!</div>
-    <div class="coverage-pill">
-      <span>📍 नरडाणा</span>
-      <span>📍 वाघाडी</span>
-      <span>📍 होळ</span>
-      <span>📍 बेतावद</span>
-      <span>📍 चिमठाणे</span>
-      <span>📍 वरडी</span>
-      <span>📍 शिंदखेडा</span>
-    </div>
-  </header>
+    <h1 class="app-title">Nardana Connect</h1>
+    <div class="app-tagline">आपलं गाव, आपली डिजिटल ओळख!</div>
+    <p class="app-subtitle">
+      नरडाणा आणि परिसरातील गावांसाठी पहिले १००% मोफत स्वतंत्र ग्रामीण जनसेवा व माहिती ॲप
+    </p>
 
-  <div class="container">
-
-    <!-- DOWNLOAD CARD -->
-    <div class="download-card">
-      <h2 style="color: var(--primary); font-size: 1.75rem; font-weight: 800; margin-bottom: 0.5rem;">
-        Android Citizen Application
-      </h2>
-      <p style="color: var(--text-muted); font-size: 1.05rem; max-width: 600px; margin: 0 auto;">
-        आपल्या गावातील सर्व महत्त्वाची माहिती, आपत्कालीन फोन नंबर, दुकाने आणि ग्रामपंचायत सूचना एका क्लिकवर मिळवा.
-      </p>
-
-      <div class="download-actions">
-        <a id="downloadBtn" href="https://github.com/siyainfotechsolar/nardana-connect/releases/download/v1.0.0/app-release.apk" class="btn btn-primary" download>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M5 20H19V18H5V20ZM12 2C8.69 2 6 4.69 6 8V16H8V8C8 5.79 9.79 4 12 4C14.21 4 16 5.79 16 8V16H18V8C18 4.69 15.31 2 12 2ZM13 14V9H11V14H8.5L12 17.5L15.5 14H13Z"/>
-          </svg>
-          मोफत ॲप डाउनलोड करा (51.9 MB)
-        </a>
-
-        <a href="https://nardana-connect.vercel.app" target="_blank" class="btn btn-secondary">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-            <line x1="8" y1="21" x2="16" y2="21"></line>
-            <line x1="12" y1="17" x2="12" y2="21"></line>
-          </svg>
-          वेब ॲडमिन पॅनेल
-        </a>
-      </div>
-
-      <div class="app-meta">
-        <div class="meta-item">📦 व्हर्जन: <strong>v1.0.0 (Release)</strong></div>
-        <div class="meta-item">📱 आकार: <strong>51.9 MB</strong></div>
-        <div class="meta-item">🔒 परवानग्या: <strong>सुरक्षित व पडताळणीकृत</strong></div>
-        <div class="meta-item">🗣️ भाषा: <strong>मराठी / English</strong></div>
-      </div>
-
-      <div class="qr-box">
-        <p style="font-size: 0.95rem; font-weight: 600; color: var(--primary);">
-          📲 मोबाईल कॅमेऱ्याने QR कोड स्कॅन करा आणि थेट डाउनलोड करा:
-        </p>
-        <img class="qr-code-img" src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=https://github.com/siyainfotechsolar/nardana-connect/releases/download/v1.0.0/app-release.apk" alt="Download APK QR Code">
-      </div>
+    <!-- Villages Covered -->
+    <div class="village-strip">
+      <span class="village-pill">📍 नरडाणा</span>
+      <span class="village-pill">📍 वाघाडी</span>
+      <span class="village-pill">📍 होळ</span>
+      <span class="village-pill">📍 बेतावद</span>
+      <span class="village-pill">📍 चिमठाणे</span>
+      <span class="village-pill">📍 वरडी</span>
+      <span class="village-pill">📍 शिंदखेडा</span>
     </div>
 
-    <!-- FEATURES -->
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon" style="background: #FEE2E2; color: #DC2626;">🚨</div>
-        <h3>आपत्कालीन संपर्क</h3>
-        <p>पोलीस, रुग्णवाहिका, अग्निशामक, महावितरण आणि ग्रामपंचायत हेल्पलाईन थेट १ क्लिकवर कॉल करा.</p>
-      </div>
+    <!-- Badges -->
+    <div class="badges">
+      <span class="badge badge-version" id="versionBadge">Version 1.0.0</span>
+      <span class="badge badge-status">● Production Release</span>
+      <span class="badge badge-free">★ मोफत जनसेवा</span>
+    </div>
+  </div>
 
-      <div class="feature-card">
-        <div class="feature-icon" style="background: #E0E7FF; color: #4338CA;">📢</div>
-        <h3>ग्रामपंचायत सूचना व नोटीस</h3>
-        <p>पाणीपुरवठा, वीज दुरुस्ती, आरोग्य शिबिरे आणि सरकारी योजनांची अधिकृत माहिती त्वरित मिळवा.</p>
-      </div>
+  <!-- Download & Details Card -->
+  <div class="release-card">
+    
+    <!-- Primary APK Download -->
+    <a href="https://github.com/siyainfotechsolar/nardana-connect/releases/download/v1.0.0/app-release.apk" class="btn-download-primary" id="primaryDownloadBtn" download="nardana-connect-v1.0.0.apk">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      <span id="btnText">DOWNLOAD APK (v1.0.0 • 51.9 MB)</span>
+    </a>
 
-      <div class="feature-card">
-        <div class="feature-icon" style="background: #DCFCE7; color: #15803D;">🏪</div>
-        <h3>स्थानिक दुकाने व सेवा</h3>
-        <p>इलेक्ट्रिशियन, प्लंबर, ट्रॅक्टर, किराणा, मेडिकल आणि कृषी सेवांची संपूर्ण गावनिहाय यादी.</p>
-      </div>
+    <!-- Secondary Web Admin Panel Link -->
+    <a href="https://nardana-connect.vercel.app" target="_blank" class="btn-download-secondary" id="adminLink">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+        <line x1="8" y1="21" x2="16" y2="21"/>
+        <line x1="12" y1="17" x2="12" y2="21"/>
+      </svg>
+      वेब ॲडमिन पॅनेल उघडा (Web Admin Panel)
+    </a>
 
-      <div class="feature-card">
-        <div class="feature-icon" style="background: #FEF3C7; color: #B45309;">💼</div>
-        <h3>स्थानिक नोकऱ्या</h3>
-        <p>परिसरातील दुकाने, शेती, वर्कशॉप आणि ड्रायव्हिंग कामांसाठी स्थानिक नोकरीच्या संधी शोधा व पोस्ट करा.</p>
+    <!-- Metadata Grid -->
+    <div class="meta-grid">
+      <div class="meta-box">
+        <div class="meta-label">Version</div>
+        <div class="meta-value" id="metaVersion">1.0.0 (Build 1)</div>
       </div>
-
-      <div class="feature-card">
-        <div class="feature-icon" style="background: #F3E8FF; color: #7E22CE;">🛒</div>
-        <h3>खरेदी व विक्री (मार्केटप्लेस)</h3>
-        <p>गावातील नागरिकांकडून जुन्या वस्तू, वाहने, जनावरे, शेती साहित्य कोणत्याही दलालीशिवाय खरेदी-विक्री करा.</p>
+      <div class="meta-box">
+        <div class="meta-label">Release Date</div>
+        <div class="meta-value" id="metaDate">2026-11-09</div>
       </div>
-
-      <div class="feature-card">
-        <div class="feature-icon" style="background: #CFFAFE; color: #0E7490;">🔓</div>
-        <h3>मोफत व लॉगिन नसलेले ॲक्सेस</h3>
-        <p>सामान्य माहिती पाहण्यासाठी कोणत्याही लॉगिनची गरज नाही. पोस्ट टाकण्यासाठी मोबाईल OTP पुरेसा आहे.</p>
+      <div class="meta-box">
+        <div class="meta-label">Target OS</div>
+        <div class="meta-value">Android 6.0 (API 23)+</div>
+      </div>
+      <div class="meta-box">
+        <div class="meta-label">File Size</div>
+        <div class="meta-value">51.9 MB (Optimized)</div>
       </div>
     </div>
 
-    <!-- HOW TO INSTALL -->
-    <div class="steps-card">
-      <h2>
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="16" x2="12" y2="12"></line>
-          <line x1="12" y1="8" x2="12.01" y2="8"></line>
-        </svg>
-        ॲप कसे इन्स्टॉल करावे? (Installation Guide)
-      </h2>
-      <ul class="steps-list">
-        <li class="step-item">
-          <div class="step-num">१</div>
-          <div class="step-text">
-            <h4>'मोफत ॲप डाउनलोड करा' बटणावर क्लिक करा</h4>
-            <p>तुमच्या मोबाईलमध्ये APK फाईल डाउनलोड होण्यास सुरुवात होईल.</p>
-          </div>
-        </li>
-        <li class="step-item">
-          <div class="step-num">२</div>
-          <div class="step-text">
-            <h4>"Download anyway" निवडा</h4>
-            <p>Chrome ब्राऊझर "File might be harmful" इशारा दाखवू शकतो, कारण हे ॲप प्ले-स्टोअर बाहेरून थेट डाऊनलोड होत आहे. ॲप पूर्णपणे सुरक्षित आहे, 'Download anyway' वर टॅप करा.</p>
-          </div>
-        </li>
-        <li class="step-item">
-          <div class="step-num">३</div>
-          <div class="step-text">
-            <h4>"Install Unknown Apps" परवानगी द्या</h4>
-            <p>मोबाईल Settings मध्ये विचारल्यास "Allow from this source" किंवा "Unknown Sources" चालू करा.</p>
-          </div>
-        </li>
-        <li class="step-item">
-          <div class="step-num">४</div>
-          <div class="step-text">
-            <h4>ॲप उघडा आणि गाव निवडा</h4>
-            <p>इन्स्टॉल पूर्ण झाल्यावर Nardana Connect ॲप उघडा, मराठी किंवा इंग्लिश भाषा निवडा आणि गाव निवडून सेवेचा लाभ घ्या!</p>
-          </div>
-        </li>
+    <!-- Highlights -->
+    <div class="changelog-section">
+      <div class="changelog-title">
+        <span>✨</span> Highlights in v1.0.0
+      </div>
+      <ul class="changelog-list" id="changelogList">
+        <li><strong>🚨 आपत्कालीन थेट संपर्क</strong> — पोलीस, रुग्णवाहिका, अग्निशामक, महावितरण आणि ग्रामपंचायत १ क्लिकवर त्वरित कॉल.</li>
+        <li><strong>📢 ग्रामपंचायत सूचना व नोटीस</strong> — पाणीपुरवठा, वीज दुरुस्ती, आरोग्य शिबिरे आणि शासकीय योजनांची अधिकृत माहिती.</li>
+        <li><strong>🏪 स्थानिक दुकाने व सेवा</strong> — इलेक्ट्रिशियन, प्लंबर, सुतार, किराणा, मेडिकल, ट्रॅक्टर आणि कृषी सेवांची संपूर्ण यादी.</li>
+        <li><strong>💼 स्थानिक नोकऱ्या (Village Jobs)</strong> — गावातील दुकाने, शेती आणि व्यवसायातील स्थानिक रोजगाराच्या संधी.</li>
+        <li><strong>🛒 खरेदी व विक्री मार्केटप्लेस</strong> — गावातील नागरिकांकडून जुनी वाहने, जनावरे आणि साहित्य ०% कमिशनने खरेदी-विक्री करा.</li>
+        <li><strong>🔓 मोफत व सुलभ प्रवेश</strong> — माहिती पाहण्यासाठी कोणत्याही लॉगिनची गरज नाही; मराठी व इंग्रजी दोन्ही भाषांमध्ये उपलब्ध.</li>
       </ul>
+    </div>
+
+    <!-- QR Code Scan -->
+    <div class="qr-container">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&amp;data=https://github.com/siyainfotechsolar/nardana-connect/releases/download/v1.0.0/app-release.apk" alt="Download QR">
+      <div class="qr-text">
+        <strong>📲 मोबाईलने थेट स्कॅन करा</strong>
+        मोबाईलच्या कॅमेऱ्याने वरील QR कोड स्कॅन करून थेट APK डाऊनलोड सुरू करा.
+      </div>
+    </div>
+
+    <!-- Sideloading Notice -->
+    <div class="instructions">
+      <strong>ℹ️ Installation Note (इन्स्टॉलेशन सूचना):</strong>
+      APK डाऊनलोड करताना <em>"Download anyway"</em> किंवा <em>"Keep anyway"</em> निवडा. विचारल्यास मोबाईल Settings मध्ये <em>"Install unknown apps"</em> परवानगी द्या. हे ॲप १००% सुरक्षित व पडताळणीकृत आहे.
     </div>
 
   </div>
 
+  <!-- Footer -->
   <footer>
-    <p><strong>NARDANA CONNECT</strong> | आपलं गाव, आपली डिजिटल ओळख!</p>
-    <p>कव्हरेज: नरडाणा • वाघाडी • होळ • बेतावद • चिमठाणे • वरडी • शिंदखेडा (धुळे, महाराष्ट्र)</p>
-    <p style="margin-top: 0.75rem; font-size: 0.8rem; color: #64748B;">
-      १००% मोफत व स्वतंत्र ग्रामीण जनसेवा मंच.
+    <p>© 2026 Nardana Connect • आपलं गाव, आपली डिजिटल ओळख!</p>
+    <p style="margin-top: 4px;">
+      <a href="https://github.com/siyainfotechsolar/nardana-connect" target="_blank">GitHub Repository</a> • 
+      <a href="https://nardana-connect.vercel.app" target="_blank">Admin Dashboard</a>
     </p>
   </footer>
 
 </body>
 </html>
-

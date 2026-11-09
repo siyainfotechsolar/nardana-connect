@@ -15,6 +15,7 @@ dist-ssr/
 *.local
 
 # Flutter & Dart
+*.apk
 .dart_tool/
 .packages
 .pub-cache/
