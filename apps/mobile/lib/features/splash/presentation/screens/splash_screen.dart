@@ -42,26 +42,35 @@ class _SplashScreenState extends State<SplashScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              width: 100,
-              height: 100,
+              width: 108,
+              height: 108,
               decoration: BoxDecoration(
-                color: Colors.white,
                 borderRadius: BorderRadius.circular(28),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.2),
-                    blurRadius: 20,
+                    color: Colors.black.withValues(alpha: 0.25),
+                    blurRadius: 22,
                     offset: const Offset(0, 10),
                   ),
                 ],
               ),
-              child: Center(
-                child: Text(
-                  'NC',
-                  style: GoogleFonts.mukta(
-                    fontSize: 42,
-                    fontWeight: FontWeight.w900,
-                    color: AppColors.primaryBlue,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(28),
+                child: Image.asset(
+                  'assets/images/app_logo.png',
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    color: Colors.white,
+                    child: Center(
+                      child: Text(
+                        'NC',
+                        style: GoogleFonts.mukta(
+                          fontSize: 42,
+                          fontWeight: FontWeight.w900,
+                          color: AppColors.primaryBlue,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),

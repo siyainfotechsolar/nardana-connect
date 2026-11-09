@@ -39,19 +39,28 @@ class HomeScreen extends ConsumerWidget {
         title: Row(
           children: [
             Container(
-              width: 36,
-              height: 36,
+              width: 38,
+              height: 38,
               decoration: BoxDecoration(
-                color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Center(
-                child: Text(
-                  'NC',
-                  style: GoogleFonts.mukta(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w900,
-                    color: AppColors.primaryBlue,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(10),
+                child: Image.asset(
+                  'assets/images/app_logo.png',
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    color: Colors.white,
+                    child: Center(
+                      child: Text(
+                        'NC',
+                        style: GoogleFonts.mukta(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w900,
+                          color: AppColors.primaryBlue,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ),

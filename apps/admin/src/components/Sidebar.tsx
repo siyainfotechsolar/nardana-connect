@@ -28,9 +28,11 @@ export const Sidebar: React.FC = () => {
     <aside className="w-64 bg-brand-dark text-white flex flex-col min-h-screen">
       {/* Brand Logo & Name */}
       <div className="p-5 border-b border-white/10 flex items-center space-x-3">
-        <div className="w-10 h-10 rounded-xl bg-brand-green flex items-center justify-center font-bold text-white shadow-md">
-          NC
-        </div>
+        <img 
+          src="/app-logo.png" 
+          alt="Nardana Connect" 
+          className="w-10 h-10 rounded-xl object-cover shadow-md border border-brand-yellow/40 bg-white" 
+        />
         <div>
           <h1 className="font-bold text-lg leading-tight tracking-wide">नरडाणा कनेक्ट</h1>
           <p className="text-xs text-brand-yellow font-medium">Nardana Connect Admin</p>

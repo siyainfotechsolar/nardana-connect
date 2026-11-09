@@ -24,26 +24,35 @@ class WelcomeScreen extends ConsumerWidget {
 
               Center(
                 child: Container(
-                  width: 90,
-                  height: 90,
+                  width: 96,
+                  height: 96,
                   decoration: BoxDecoration(
-                    color: AppColors.primaryBlue,
-                    borderRadius: BorderRadius.circular(24),
+                    borderRadius: BorderRadius.circular(26),
                     boxShadow: [
                       BoxShadow(
                         color: AppColors.primaryBlue.withValues(alpha: 0.25),
-                        blurRadius: 18,
+                        blurRadius: 20,
                         offset: const Offset(0, 8),
                       ),
                     ],
                   ),
-                  child: Center(
-                    child: Text(
-                      'NC',
-                      style: GoogleFonts.mukta(
-                        fontSize: 38,
-                        fontWeight: FontWeight.w900,
-                        color: Colors.white,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(26),
+                    child: Image.asset(
+                      'assets/images/app_logo.png',
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        color: AppColors.primaryBlue,
+                        child: Center(
+                          child: Text(
+                            'NC',
+                            style: GoogleFonts.mukta(
+                              fontSize: 38,
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ),
