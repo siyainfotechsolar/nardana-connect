@@ -10,3 +10,4 @@ This folder contains database migrations and SQL schema definitions for **Nardan
 Run migrations directly via:
 1. Supabase Dashboard: **SQL Editor** -> Paste SQL -> **Run**
 2. Or Supabase CLI: `supabase db push` / `supabase migration up`
+
