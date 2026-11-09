@@ -23,6 +23,7 @@ build/
 apps/mobile/build/
 apps/mobile/.dart_tool/
 apps/mobile/android/.gradle/
+apps/mobile/android/.kotlin/
 apps/mobile/android/local.properties
 apps/mobile/ios/.symlinks/
 apps/mobile/ios/Pods/
