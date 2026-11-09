@@ -59,10 +59,16 @@ export const Sidebar: React.FC = () => {
         ))}
       </nav>
 
-      {/* Footer Info */}
-      <div className="p-4 border-t border-white/10 text-xs text-slate-400 flex items-center space-x-2">
-        <ShieldCheck className="w-4 h-4 text-brand-green" />
-        <span>आपलं गाव, आपली डिजिटल ओळख!</span>
+      {/* Footer Info & Developer Attribution */}
+      <div className="p-4 border-t border-white/10 space-y-2">
+        <div className="text-xs text-slate-300 flex items-center space-x-2">
+          <ShieldCheck className="w-4 h-4 text-brand-green flex-shrink-0" />
+          <span>आपलं गाव, आपली डिजिटल ओळख!</span>
+        </div>
+        <div className="pt-2 border-t border-white/5 text-center">
+          <p className="text-[10px] text-slate-400">Developed with ❤️ by</p>
+          <p className="text-xs font-semibold text-brand-yellow">Siya Infotech &amp; Solar Energy</p>
+        </div>
       </div>
     </aside>
   );

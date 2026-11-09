@@ -143,3 +143,4 @@ Generate-NardanaIcon -Size 192 -OutputPath "$baseRes\mipmap-xxxhdpi\ic_launcher.
 Generate-NardanaIcon -Size 512 -OutputPath "c:\ide\nardana connect\assets\branding\app_icon_512.png"
 Generate-NardanaIcon -Size 512 -OutputPath "c:\ide\nardana connect\apps\mobile\assets\images\app_logo.png"
 Generate-NardanaIcon -Size 512 -OutputPath "c:\ide\nardana connect\apps\admin\public\app-logo.png"
+

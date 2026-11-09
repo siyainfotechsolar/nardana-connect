@@ -148,9 +148,47 @@ class ProfileScreen extends ConsumerWidget {
                         applicationName: 'नरडाणा कनेक्ट (Nardana Connect)',
                         applicationVersion: '1.0.0 (Community Edition)',
                         applicationLegalese:
-                            'नरडाणा व परिसरातील सर्व गावांसाठी मोफत सामाजिक मंच.\nआपलं गाव, आपली डिजिटल ओळख!',
+                            'नरडाणा व परिसरातील सर्व गावांसाठी मोफत सामाजिक मंच.\nआपलं गाव, आपली डिजिटल ओळख!\n\nDeveloped by Siya Infotech & Solar Energy',
                       );
                     },
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 18),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    'संकल्पना व तंत्रज्ञान विकास',
+                    style: GoogleFonts.mukta(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'Siya Infotech & Solar Energy',
+                    style: GoogleFonts.mukta(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primaryBlue,
+                    ),
+                  ),
+                  Text(
+                    'Betawad • Rural Digital Initiative',
+                    style: GoogleFonts.mukta(
+                      fontSize: 11,
+                      color: AppColors.secondaryGreen,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ],
               ),

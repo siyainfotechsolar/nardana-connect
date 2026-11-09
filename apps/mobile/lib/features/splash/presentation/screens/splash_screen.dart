@@ -104,13 +104,31 @@ class _SplashScreenState extends State<SplashScreen> {
                 color: Colors.white.withValues(alpha: 0.9),
               ),
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 36),
             const SizedBox(
               width: 24,
               height: 24,
               child: CircularProgressIndicator(
                 strokeWidth: 2.5,
                 valueColor: AlwaysStoppedAnimation<Color>(AppColors.accentYellow),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'विकसित: सिया इन्फोटेक अँड सोलर एनर्जी',
+              style: GoogleFonts.mukta(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: Colors.white.withValues(alpha: 0.9),
+              ),
+            ),
+            Text(
+              'Developed by Siya Infotech & Solar Energy',
+              style: GoogleFonts.mukta(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: AppColors.accentYellow,
+                letterSpacing: 0.5,
               ),
             ),
           ],
