@@ -77,7 +77,7 @@ export const Sidebar: React.FC = () => {
         </div>
         <div className="pt-2 border-t border-white/5 text-center">
           <p className="text-[10px] text-slate-400">Developed with ❤️ by</p>
-          <p className="text-xs font-semibold text-brand-yellow">Siya Infotech &amp; Solar Energy</p>
+          <p className="text-xs font-semibold text-brand-yellow">Siya Infotech</p>
         </div>
       </div>
     </aside>

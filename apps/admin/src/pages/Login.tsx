@@ -131,10 +131,11 @@ export const Login: React.FC = () => {
         {/* Footer */}
         <div className="bg-slate-50 px-6 py-3 border-t border-slate-100 text-center">
           <p className="text-[11px] text-slate-400">
-            आपलं गाव, आपली डिजिटल ओळख! Developed by <strong className="text-slate-600">Siya Infotech &amp; Solar Energy</strong>
+            आपलं गाव, आपली डिजिटल ओळख! Developed by <strong className="text-slate-600">Siya Infotech</strong>
           </p>
         </div>
       </div>
     </div>
   );
 };
+

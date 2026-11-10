@@ -60,7 +60,13 @@ final appRouter = GoRouter(
     ),
     GoRoute(
       path: '/explore',
-      builder: (context, state) => const ExploreScreen(),
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>?;
+        return ExploreScreen(
+          initialCategory: extra?['category'] as String?,
+          initialGroup: extra?['group'] as String?,
+        );
+      },
     ),
     GoRoute(
       path: '/business-detail',
