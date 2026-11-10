@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:nardana_connect/core/constants/app_colors.dart';
@@ -38,10 +39,21 @@ class JobsScreen extends StatelessWidget {
       'phone': '9970112233',
       'desc': 'ऑनलाईन शासकीय फॉर्म भरणे, ७/१२ काढणे व झेरॉक्स कामासाठी.',
     },
+    {
+      'title': 'वेल्डिंग व फॅब्रिकेशन कारागीर',
+      'company': 'जय बजरंग फॅब्रिकेशन वर्कशॉप',
+      'salary': '₹10,000 - ₹15,000 / महिना',
+      'qualification': 'वेल्डिंग काम अनुभव (किमान १ वर्ष)',
+      'type': 'Full-time',
+      'location': 'स्टेशन रोड, नरडाणा',
+      'phone': '9822334455',
+      'desc': 'लोखंडी गेट, ग्रील व शेती अवजारे वेल्डिंगसाठी कारागीर हवा आहे.',
+    },
   ];
 
   Future<void> _call(String number) async {
-    final uri = Uri.parse('tel:$number');
+    final clean = number.replaceAll(RegExp(r'[^0-9]'), '');
+    final uri = Uri.parse('tel:$clean');
     if (await canLaunchUrl(uri)) await launchUrl(uri);
   }
 
@@ -61,100 +73,148 @@ class JobsScreen extends StatelessWidget {
         itemBuilder: (context, index) {
           final j = _sampleJobs[index];
           return Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          j['title'],
-                          style: GoogleFonts.mukta(
-                            fontSize: 17,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.textPrimary,
+            elevation: 1.5,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+              side: const BorderSide(color: AppColors.border),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () => context.push('/job-detail', extra: j),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            j['title'],
+                            style: GoogleFonts.mukta(
+                              fontSize: 17,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textPrimary,
+                            ),
                           ),
                         ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryBlue.withValues(alpha: 0.08),
-                          borderRadius: BorderRadius.circular(6),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryBlue.withValues(alpha: 0.08),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                j['type'],
+                                style: GoogleFonts.mukta(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primaryBlue,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            const Icon(
+                              Icons.arrow_forward_ios_rounded,
+                              size: 13,
+                              color: AppColors.primaryBlue,
+                            ),
+                          ],
                         ),
-                        child: Text(
-                          j['type'],
+                      ],
+                    ),
+                    Text(
+                      j['company'],
+                      style: GoogleFonts.mukta(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.secondaryGreen,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      j['desc'],
+                      style: GoogleFonts.mukta(
+                        fontSize: 13,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        const Icon(Icons.currency_rupee_rounded,
+                            size: 15, color: AppColors.primaryBlue),
+                        const SizedBox(width: 4),
+                        Text(
+                          j['salary'],
                           style: GoogleFonts.mukta(
-                            fontSize: 11,
+                            fontSize: 13,
                             fontWeight: FontWeight.bold,
                             color: AppColors.primaryBlue,
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    j['company'],
-                    style: GoogleFonts.mukta(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.secondaryGreen,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    j['desc'],
-                    style: GoogleFonts.mukta(
-                      fontSize: 13,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Row(
-                    children: [
-                      const Icon(Icons.currency_rupee_rounded,
-                          size: 15, color: AppColors.primaryBlue),
-                      const SizedBox(width: 4),
-                      Text(
-                        j['salary'],
-                        style: GoogleFonts.mukta(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primaryBlue,
+                        const Spacer(),
+                        const Icon(Icons.location_on_outlined,
+                            size: 14, color: AppColors.textMuted),
+                        const SizedBox(width: 4),
+                        Text(
+                          j['location'],
+                          style: GoogleFonts.mukta(
+                            fontSize: 12,
+                            color: AppColors.textMuted,
+                          ),
                         ),
-                      ),
-                      const Spacer(),
-                      const Icon(Icons.location_on_outlined,
-                          size: 14, color: AppColors.textMuted),
-                      const SizedBox(width: 4),
-                      Text(
-                        j['location'],
-                        style: GoogleFonts.mukta(
-                          fontSize: 12,
-                          color: AppColors.textMuted,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 14),
-                  ElevatedButton.icon(
-                    onPressed: () => _call(j['phone']),
-                    icon: const Icon(Icons.call_rounded, size: 16),
-                    label: Text('नोकरीसाठी संपर्क करा (${j['phone']})'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryBlue,
-                      minimumSize: const Size.fromHeight(42),
-                      textStyle: GoogleFonts.mukta(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      ],
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: () => _call(j['phone']),
+                            icon: const Icon(Icons.call_rounded, size: 16),
+                            label: Text('कॉल (${j['phone']})'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.secondaryGreen,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              textStyle: GoogleFonts.mukta(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        OutlinedButton.icon(
+                          onPressed: () => context.push('/job-detail', extra: j),
+                          icon: const Icon(Icons.visibility_rounded, size: 15),
+                          label: const Text('तपशील पहा'),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: AppColors.primaryBlue,
+                            side: const BorderSide(color: AppColors.primaryBlue),
+                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            textStyle: GoogleFonts.mukta(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           );

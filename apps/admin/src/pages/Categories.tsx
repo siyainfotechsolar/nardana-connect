@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Category } from '../types/database';
-import { Layers, Plus, Check, X, Edit2, Trash2, Search, Filter } from 'lucide-react';
+import { Layers, Plus, Check, X, Edit2, Trash2, Search, Filter, Eye, ArrowRight } from 'lucide-react';
 import { useToast } from '../components/Toast';
 
 interface CategoryFormData {
@@ -35,12 +36,14 @@ const groupTypeOptions = [
 ];
 
 export const Categories: React.FC = () => {
+  const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGroup, setSelectedGroup] = useState('all');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
+  const [viewingCategory, setViewingCategory] = useState<Category | null>(null);
   const [formData, setFormData] = useState<CategoryFormData>(defaultFormData);
   const [submitting, setSubmitting] = useState(false);
   const { showToast } = useToast();
@@ -271,10 +274,22 @@ export const Categories: React.FC = () => {
                 </tr>
               ) : (
                 filteredCategories.map((c) => (
-                  <tr key={c.id} className="hover:bg-slate-50/70 transition">
-                    <td className="px-5 py-3.5 font-bold text-slate-800 flex items-center gap-1.5">
-                      <Layers className="w-3.5 h-3.5 text-brand-blue flex-shrink-0" />
-                      <span>{c.name_mr}</span>
+                  <tr 
+                    key={c.id} 
+                    onClick={() => setViewingCategory(c)} 
+                    className="hover:bg-blue-50/70 transition cursor-pointer group"
+                    title="सविस्तर कॅटेगरी माहिती पाहण्यासाठी क्लिक करा"
+                  >
+                    <td className="px-5 py-3.5 font-bold text-slate-800">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5 group-hover:text-brand-blue transition">
+                          <Layers className="w-3.5 h-3.5 text-brand-blue flex-shrink-0" />
+                          <span>{c.name_mr}</span>
+                        </div>
+                        <span className="text-[10px] text-brand-blue bg-blue-100 font-semibold px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition mr-2">
+                          तपशील ↗
+                        </span>
+                      </div>
                     </td>
                     <td className="px-5 py-3.5 text-slate-600 font-medium">{c.name_en}</td>
                     <td className="px-5 py-3.5">
@@ -284,7 +299,7 @@ export const Categories: React.FC = () => {
                     </td>
                     <td className="px-5 py-3.5 text-slate-500 font-mono text-[11px]">{c.icon}</td>
                     <td className="px-5 py-3.5 text-slate-600">{c.sort_order}</td>
-                    <td className="px-5 py-3.5">
+                    <td className="px-5 py-3.5" onClick={(e) => e.stopPropagation()}>
                       <button
                         onClick={() => handleToggleStatus(c)}
                         title="स्थिती बदलण्यासाठी क्लिक करा"
@@ -298,7 +313,14 @@ export const Categories: React.FC = () => {
                         <span>{c.is_active ? 'सक्रिय' : 'निष्क्रिय'}</span>
                       </button>
                     </td>
-                    <td className="px-5 py-3.5 text-right space-x-1">
+                    <td className="px-5 py-3.5 text-right space-x-1" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        onClick={() => setViewingCategory(c)}
+                        className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded transition"
+                        title="तपशील पहा"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                      </button>
                       <button
                         onClick={() => handleOpenEdit(c)}
                         className="p-1.5 text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded transition"
@@ -448,6 +470,104 @@ export const Categories: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* View Category Modal */}
+      {viewingCategory && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-200">
+            <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-blue-100 rounded-lg text-brand-blue">
+                  <Layers className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-base text-slate-900 leading-tight">
+                    {viewingCategory.name_mr}
+                  </h3>
+                  <p className="text-xs text-slate-500">{viewingCategory.name_en}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setViewingCategory(null)}
+                className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-200 transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4 text-xs text-slate-700">
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-blue-50/60 rounded-xl border border-blue-100">
+                  <span className="text-[11px] text-slate-500 font-semibold block">ग्रुप टाईप</span>
+                  <span className="text-xs font-bold text-brand-blue uppercase">{viewingCategory.group_type}</span>
+                </div>
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                  <span className="text-[11px] text-slate-500 font-semibold block">स्थिती</span>
+                  <span className={`inline-block mt-0.5 px-2 py-0.5 rounded text-[11px] font-bold ${
+                    viewingCategory.is_active ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-600'
+                  }`}>
+                    {viewingCategory.is_active ? '✓ सक्रिय (Active)' : 'निष्क्रिय (Inactive)'}
+                  </span>
+                </div>
+              </div>
+
+              <div className="space-y-2 bg-slate-50/50 p-4 rounded-xl border border-slate-100 text-xs">
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-500">कॅटेगरी स्लॅग (Slug):</span>
+                  <span className="font-mono text-slate-800 font-bold">{viewingCategory.slug}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-500">आयकॉन नाव:</span>
+                  <span className="font-mono text-slate-800">{viewingCategory.icon}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-500">क्रम (Sort Order):</span>
+                  <span className="font-bold text-slate-800">{viewingCategory.sort_order}</span>
+                </div>
+                <div className="flex justify-between py-1">
+                  <span className="text-slate-500">कार्यक्षेत्र:</span>
+                  <span className="font-bold text-brand-green">केवळ नरडाणा गाव</span>
+                </div>
+              </div>
+
+              <div className="p-3.5 bg-blue-50/70 border border-blue-200 rounded-xl flex items-center justify-between">
+                <div>
+                  <p className="font-bold text-slate-800 text-xs">या प्रवर्गातील व्यवसाय</p>
+                  <p className="text-[11px] text-slate-500">नरडाणा गावातील नोंदी पहा</p>
+                </div>
+                <button
+                  onClick={() => {
+                    setViewingCategory(null);
+                    navigate('/businesses');
+                  }}
+                  className="px-3 py-1.5 bg-brand-blue text-white rounded-lg font-bold text-xs hover:bg-brand-dark transition flex items-center gap-1"
+                >
+                  <span>व्यवसाय पहा</span>
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+
+            <div className="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+              <button
+                onClick={() => {
+                  const toEdit = viewingCategory;
+                  setViewingCategory(null);
+                  handleOpenEdit(toEdit);
+                }}
+                className="px-3.5 py-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg text-xs font-semibold inline-flex items-center gap-1 transition"
+              >
+                <Edit2 className="w-3.5 h-3.5" /> संपादित करा
+              </button>
+              <button
+                onClick={() => setViewingCategory(null)}
+                className="px-4 py-1.5 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 text-xs font-semibold"
+              >
+                बंद करा
+              </button>
+            </div>
           </div>
         </div>
       )}

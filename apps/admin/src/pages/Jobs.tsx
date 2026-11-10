@@ -279,10 +279,22 @@ export const Jobs: React.FC = () => {
                 </tr>
               ) : (
                 filteredJobs.map((j) => (
-                  <tr key={j.id} className="hover:bg-slate-50/70 transition">
-                    <td className="px-5 py-3.5 font-bold text-slate-800 flex items-center gap-1.5">
-                      <Briefcase className="w-3.5 h-3.5 text-brand-blue flex-shrink-0" />
-                      <span>{j.job_title}</span>
+                  <tr 
+                    key={j.id} 
+                    onClick={() => setViewingJob(j)} 
+                    className="hover:bg-blue-50/70 transition cursor-pointer group"
+                    title="सविस्तर माहिती पाहण्यासाठी क्लिक करा"
+                  >
+                    <td className="px-5 py-3.5">
+                      <div className="flex items-center justify-between">
+                        <div className="font-bold text-slate-800 flex items-center gap-1.5 group-hover:text-brand-blue transition">
+                          <Briefcase className="w-3.5 h-3.5 text-brand-blue flex-shrink-0" />
+                          <span>{j.job_title}</span>
+                        </div>
+                        <span className="text-[10px] text-brand-blue bg-blue-100 font-semibold px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition mr-2">
+                          तपशील ↗
+                        </span>
+                      </div>
                     </td>
                     <td className="px-5 py-3.5 text-slate-600">
                       <p className="font-medium text-slate-800">{j.company_name}</p>
@@ -318,7 +330,7 @@ export const Jobs: React.FC = () => {
                         </span>
                       )}
                     </td>
-                    <td className="px-5 py-3.5 text-right space-x-1">
+                    <td className="px-5 py-3.5 text-right space-x-1" onClick={(e) => e.stopPropagation()}>
                       {j.status !== 'approved' && (
                         <button
                           onClick={() => updateStatus(j.id, 'approved')}
@@ -506,44 +518,136 @@ export const Jobs: React.FC = () => {
       {/* View Job Modal */}
       {viewingJob && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-200 p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
-                <Briefcase className="w-5 h-5 text-brand-blue" />
-                {viewingJob.job_title}
-              </h3>
+          <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden border border-slate-200">
+            <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-blue-100 rounded-lg text-brand-blue">
+                  <Briefcase className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-base text-slate-900 leading-tight">
+                    {viewingJob.job_title}
+                  </h3>
+                  <p className="text-xs text-slate-500">{viewingJob.company_name}</p>
+                </div>
+              </div>
               <button
                 onClick={() => setViewingJob(null)}
-                className="text-slate-400 hover:text-slate-600 p-1 rounded"
+                className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-200 transition"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="space-y-2 text-xs text-slate-700">
-              <p><strong>कंपनी / मालक:</strong> {viewingJob.company_name}</p>
-              <p><strong>ठिकाण:</strong> {viewingJob.job_location}</p>
-              <p><strong>पगार:</strong> {viewingJob.salary_range || 'चर्चेनुसार'}</p>
-              <p><strong>प्रकार:</strong> {viewingJob.job_type}</p>
-              <p><strong>पात्रता:</strong> {viewingJob.qualification || 'अनुभव'}</p>
-              <p><strong>संपर्क:</strong> {viewingJob.contact_number}</p>
-              <p><strong>वर्णन:</strong> {viewingJob.description}</p>
-              <p>
-                <strong>स्थिती:</strong>{' '}
-                <span className={`px-2 py-0.5 rounded font-bold ${
-                  viewingJob.status === 'approved' ? 'bg-emerald-100 text-emerald-800' :
-                  viewingJob.status === 'pending' ? 'bg-amber-100 text-amber-800' :
-                  'bg-rose-100 text-rose-800'
-                }`}>
-                  {viewingJob.status}
-                </span>
-              </p>
+            <div className="p-6 space-y-4 text-xs text-slate-700 max-h-[75vh] overflow-y-auto">
+              {/* Status and Salary Cards */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-blue-50/60 rounded-xl border border-blue-100">
+                  <span className="text-[11px] text-slate-500 font-semibold block">अपेक्षित वेतन (Salary)</span>
+                  <span className="text-sm font-bold text-brand-blue">{viewingJob.salary_range || 'चर्चेनुसार'}</span>
+                </div>
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                  <span className="text-[11px] text-slate-500 font-semibold block">सध्याची स्थिती</span>
+                  <span className={`inline-block mt-0.5 px-2 py-0.5 rounded text-[11px] font-bold ${
+                    viewingJob.status === 'approved' ? 'bg-emerald-100 text-emerald-800' :
+                    viewingJob.status === 'pending' ? 'bg-amber-100 text-amber-800' :
+                    'bg-rose-100 text-rose-800'
+                  }`}>
+                    {viewingJob.status === 'approved' ? '✓ मंजूर (Approved)' :
+                     viewingJob.status === 'pending' ? '⏳ प्रलंबित (Pending)' : '✕ नाकारले'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Specifications */}
+              <div className="space-y-2 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-500">कामाचे ठिकाण:</span>
+                  <span className="font-bold text-slate-800">{viewingJob.job_location}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-500">कामाचा प्रकार:</span>
+                  <span className="font-semibold text-slate-800">{viewingJob.job_type}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-500">पात्रता / शिक्षण:</span>
+                  <span className="font-semibold text-slate-800">{viewingJob.qualification || 'अनुभव'}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-500">आवश्यक अनुभव:</span>
+                  <span className="font-semibold text-slate-800">{viewingJob.experience || 'नवीन / अनुभवी'}</span>
+                </div>
+                <div className="flex justify-between py-1">
+                  <span className="text-slate-500">नोंदणी तारीख:</span>
+                  <span className="text-slate-600 font-mono">
+                    {new Date(viewingJob.created_at).toLocaleDateString('mr-IN')}
+                  </span>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div>
+                <p className="font-bold text-slate-800 mb-1">कामाचे सविस्तर वर्णन:</p>
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-700 leading-relaxed whitespace-pre-line">
+                  {viewingJob.description || 'सविस्तर वर्णन उपलब्ध नाही.'}
+                </div>
+              </div>
+
+              {/* Contact Actions */}
+              <div className="p-3.5 bg-emerald-50/60 rounded-xl border border-emerald-200 flex items-center justify-between">
+                <div>
+                  <p className="text-[11px] text-emerald-800 font-semibold">मालक / संपर्क व्यक्ती</p>
+                  <p className="text-sm font-bold text-slate-800">{viewingJob.employer_name || viewingJob.company_name}</p>
+                  <p className="font-mono text-emerald-700 font-bold">{viewingJob.contact_number}</p>
+                </div>
+                <div className="flex gap-2">
+                  <a
+                    href={`tel:${viewingJob.contact_number}`}
+                    className="px-3 py-1.5 bg-emerald-600 text-white rounded-lg text-xs font-bold hover:bg-emerald-700 transition flex items-center gap-1"
+                  >
+                    <Phone className="w-3.5 h-3.5" /> कॉल करा
+                  </a>
+                  <a
+                    href={`https://wa.me/91${viewingJob.contact_number}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-3 py-1.5 bg-brand-green text-white rounded-lg text-xs font-bold hover:bg-emerald-800 transition"
+                  >
+                    WhatsApp
+                  </a>
+                </div>
+              </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+            {/* Modal Footer with Status Actions */}
+            <div className="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+              <div className="flex gap-1.5">
+                {viewingJob.status !== 'approved' && (
+                  <button
+                    onClick={() => {
+                      updateStatus(viewingJob.id, 'approved');
+                      setViewingJob(null);
+                    }}
+                    className="px-3 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-xs font-semibold inline-flex items-center gap-1 transition"
+                  >
+                    <CheckCircle className="w-3.5 h-3.5" /> मंजूर करा
+                  </button>
+                )}
+                {viewingJob.status !== 'rejected' && (
+                  <button
+                    onClick={() => {
+                      updateStatus(viewingJob.id, 'rejected');
+                      setViewingJob(null);
+                    }}
+                    className="px-3 py-1.5 bg-rose-600 text-white rounded-lg hover:bg-rose-700 text-xs font-semibold inline-flex items-center gap-1 transition"
+                  >
+                    <XCircle className="w-3.5 h-3.5" /> नाकारा
+                  </button>
+                )}
+              </div>
               <button
                 onClick={() => setViewingJob(null)}
-                className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 text-xs font-semibold"
+                className="px-4 py-1.5 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 text-xs font-semibold"
               >
                 बंद करा
               </button>

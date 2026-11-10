@@ -7,9 +7,12 @@ import 'package:nardana_connect/features/explore/presentation/screens/explore_sc
 import 'package:nardana_connect/features/explore/presentation/screens/business_detail_screen.dart';
 import 'package:nardana_connect/features/explore/presentation/screens/search_screen.dart';
 import 'package:nardana_connect/features/emergency/presentation/screens/emergency_screen.dart';
-import 'package:nardana_connect/features/notices/presentation/screens/notices_screen.dart';
 import 'package:nardana_connect/features/jobs/presentation/screens/jobs_screen.dart';
+import 'package:nardana_connect/features/jobs/presentation/screens/job_detail_screen.dart';
 import 'package:nardana_connect/features/marketplace/presentation/screens/marketplace_screen.dart';
+import 'package:nardana_connect/features/marketplace/presentation/screens/marketplace_detail_screen.dart';
+import 'package:nardana_connect/features/notices/presentation/screens/notices_screen.dart';
+import 'package:nardana_connect/features/notices/presentation/screens/notice_detail_screen.dart';
 import 'package:nardana_connect/features/profile/presentation/screens/favorites_screen.dart';
 import 'package:nardana_connect/features/advertisements/models/advertisement_model.dart';
 import 'package:nardana_connect/features/advertisements/presentation/screens/advertisement_detail_screen.dart';
@@ -57,12 +60,33 @@ final appRouter = GoRouter(
       builder: (context, state) => const NoticesScreen(),
     ),
     GoRoute(
+      path: '/notice-detail',
+      builder: (context, state) {
+        final notice = state.extra as Map<String, dynamic>? ?? {};
+        return NoticeDetailScreen(notice: notice);
+      },
+    ),
+    GoRoute(
       path: '/jobs',
       builder: (context, state) => const JobsScreen(),
     ),
     GoRoute(
+      path: '/job-detail',
+      builder: (context, state) {
+        final job = state.extra as Map<String, dynamic>? ?? {};
+        return JobDetailScreen(job: job);
+      },
+    ),
+    GoRoute(
       path: '/marketplace',
       builder: (context, state) => const MarketplaceScreen(),
+    ),
+    GoRoute(
+      path: '/marketplace-detail',
+      builder: (context, state) {
+        final item = state.extra as Map<String, dynamic>? ?? {};
+        return MarketplaceDetailScreen(item: item);
+      },
     ),
     GoRoute(
       path: '/favorites',

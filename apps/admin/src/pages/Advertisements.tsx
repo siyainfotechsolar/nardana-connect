@@ -73,6 +73,7 @@ export const Advertisements: React.FC = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAd, setEditingAd] = useState<Advertisement | null>(null);
+  const [viewingAd, setViewingAd] = useState<Advertisement | null>(null);
   const [formData, setFormData] = useState<AdFormData>(defaultFormData);
   const [submitting, setSubmitting] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
@@ -497,13 +498,18 @@ export const Advertisements: React.FC = () => {
                     : '0.0';
 
                   return (
-                    <tr key={ad.id} className="hover:bg-slate-50/70 transition">
+                    <tr 
+                      key={ad.id} 
+                      onClick={() => setViewingAd(ad)} 
+                      className="hover:bg-blue-50/70 transition cursor-pointer group"
+                      title="सविस्तर जाहिरात माहिती पाहण्यासाठी क्लिक करा"
+                    >
                       <td className="px-4 py-3">
                         <div className="w-16 h-11 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 shadow-xs flex-shrink-0">
                           <img
                             src={ad.image_url}
                             alt={ad.title_mr}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover group-hover:scale-105 transition"
                             onError={(e) => {
                               (e.target as any).src = 'https://images.unsplash.com/photo-1592982537447-7440770cbfc9?w=300&auto=format&fit=crop&q=80';
                             }}
@@ -513,7 +519,14 @@ export const Advertisements: React.FC = () => {
 
                       <td className="px-4 py-3 max-w-xs">
                         <div className="space-y-0.5">
-                          <p className="font-bold text-slate-900 leading-tight line-clamp-1">{ad.title_mr}</p>
+                          <div className="flex items-center justify-between">
+                            <p className="font-bold text-slate-900 leading-tight line-clamp-1 group-hover:text-brand-blue transition">
+                              {ad.title_mr}
+                            </p>
+                            <span className="text-[10px] text-brand-blue bg-blue-100 font-semibold px-2 py-0.2 rounded opacity-0 group-hover:opacity-100 transition mr-2">
+                              तपशील ↗
+                            </span>
+                          </div>
                           <p className="text-[11px] text-slate-400 line-clamp-1">{ad.title_en}</p>
                           {ad.advertiser_name && (
                             <p className="text-[10px] text-slate-500 font-medium">
@@ -602,7 +615,14 @@ export const Advertisements: React.FC = () => {
                         </button>
                       </td>
 
-                      <td className="px-4 py-3 text-right space-x-1">
+                      <td className="px-4 py-3 text-right space-x-1" onClick={(e) => e.stopPropagation()}>
+                        <button
+                          onClick={() => setViewingAd(ad)}
+                          className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded transition"
+                          title="सविस्तर तपशील पहा"
+                        >
+                          <Eye className="w-3.5 h-3.5" />
+                        </button>
                         <button
                           onClick={() => handleOpenEdit(ad)}
                           className="p-1.5 text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded transition"
@@ -1024,6 +1044,174 @@ export const Advertisements: React.FC = () => {
                   {submitting ? 'जतन करत आहे...' : editingAd ? 'बदल सेव्ह करा' : 'जाहिरात प्रसिद्ध करा'}
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* View Advertisement Details Modal */}
+      {viewingAd && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden border border-slate-200">
+            {/* Header */}
+            <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-blue-100 rounded-lg text-brand-blue">
+                  <Megaphone className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-base text-slate-900 leading-tight">
+                    {viewingAd.title_mr}
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    {viewingAd.advertiser_name ? `जाहिरातदार: ${viewingAd.advertiser_name}` : 'नरडाणा स्थानिक जाहिरात'}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setViewingAd(null)}
+                className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-200 transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4 text-xs text-slate-700 max-h-[75vh] overflow-y-auto">
+              {/* Banner Preview */}
+              <div className="w-full aspect-video rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shadow-inner">
+                <img
+                  src={viewingAd.image_url}
+                  alt={viewingAd.title_mr}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    (e.target as any).src = 'https://images.unsplash.com/photo-1592982537447-7440770cbfc9?w=600&auto=format&fit=crop&q=80';
+                  }}
+                />
+              </div>
+
+              {/* Badges & Placement */}
+              <div className="flex flex-wrap items-center gap-2">
+                {getPlacementBadge(viewingAd.placement)}
+                <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-slate-100 text-slate-700 border border-slate-200">
+                  प्राधान्य: {viewingAd.priority}
+                </span>
+                <span className={`px-2 py-0.5 rounded text-[11px] font-bold ${
+                  new Date(viewingAd.end_date) < new Date()
+                    ? 'bg-rose-100 text-rose-800'
+                    : viewingAd.is_active
+                    ? 'bg-emerald-100 text-emerald-800'
+                    : 'bg-slate-100 text-slate-600'
+                }`}>
+                  {new Date(viewingAd.end_date) < new Date()
+                    ? 'मुदत संपली (Expired)'
+                    : viewingAd.is_active
+                    ? '✓ सक्रिय (Active)'
+                    : 'निष्क्रिय (Inactive)'}
+                </span>
+              </div>
+
+              {/* Real-time Analytics */}
+              <div className="grid grid-cols-3 gap-2.5 p-3.5 bg-blue-50/60 rounded-xl border border-blue-200 text-center">
+                <div>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase">इम्प्रेशन्स (Views)</p>
+                  <p className="text-lg font-black text-brand-blue">{viewingAd.impressions_count || 0}</p>
+                </div>
+                <div className="border-x border-blue-200">
+                  <p className="text-[10px] text-slate-500 font-bold uppercase">एकूण क्लिक्स</p>
+                  <p className="text-lg font-black text-purple-700">{viewingAd.clicks_count || 0}</p>
+                </div>
+                <div>
+                  <p className="text-[10px] text-slate-500 font-bold uppercase">CTR दर</p>
+                  <p className="text-lg font-black text-emerald-700">
+                    {(viewingAd.impressions_count || 0) > 0 
+                      ? (((viewingAd.clicks_count || 0) / viewingAd.impressions_count) * 100).toFixed(1) 
+                      : '0.0'}%
+                  </p>
+                </div>
+              </div>
+
+              {/* Titles & Descriptions */}
+              <div className="space-y-2 bg-slate-50/70 p-4 rounded-xl border border-slate-100">
+                <div>
+                  <span className="text-[11px] text-slate-500 font-semibold">मराठी शीर्षक:</span>
+                  <p className="font-bold text-slate-900 text-sm">{viewingAd.title_mr}</p>
+                </div>
+                {viewingAd.title_en && (
+                  <div>
+                    <span className="text-[11px] text-slate-500 font-semibold">English Title:</span>
+                    <p className="text-slate-700">{viewingAd.title_en}</p>
+                  </div>
+                )}
+                {viewingAd.description_mr && (
+                  <div>
+                    <span className="text-[11px] text-slate-500 font-semibold">मराठी मजकूर:</span>
+                    <p className="text-slate-800 leading-relaxed whitespace-pre-line mt-0.5">{viewingAd.description_mr}</p>
+                  </div>
+                )}
+                {viewingAd.description_en && (
+                  <div>
+                    <span className="text-[11px] text-slate-500 font-semibold">English Description:</span>
+                    <p className="text-slate-600">{viewingAd.description_en}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Validity & Target */}
+              <div className="space-y-1.5 p-3.5 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+                <div className="flex justify-between py-1 border-b border-slate-200">
+                  <span className="text-slate-500">कालावधी (Validity):</span>
+                  <span className="font-bold text-slate-800 font-mono">
+                    {new Date(viewingAd.start_date).toLocaleDateString('mr-IN')} ते {new Date(viewingAd.end_date).toLocaleDateString('mr-IN')}
+                  </span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-200">
+                  <span className="text-slate-500">कृती प्रकार (Action):</span>
+                  <span className="font-semibold text-slate-800">{viewingAd.target_type}</span>
+                </div>
+                {viewingAd.phone && (
+                  <div className="flex justify-between py-1 border-b border-slate-200">
+                    <span className="text-slate-500">फोन नंबर:</span>
+                    <a href={`tel:${viewingAd.phone}`} className="font-mono font-bold text-brand-blue hover:underline">
+                      {viewingAd.phone}
+                    </a>
+                  </div>
+                )}
+                {viewingAd.whatsapp && (
+                  <div className="flex justify-between py-1 border-b border-slate-200">
+                    <span className="text-slate-500">व्हॉट्सॲप नंबर:</span>
+                    <a href={`https://wa.me/91${viewingAd.whatsapp}`} target="_blank" rel="noreferrer" className="font-mono font-bold text-emerald-600 hover:underline">
+                      {viewingAd.whatsapp}
+                    </a>
+                  </div>
+                )}
+                {viewingAd.target_url && (
+                  <div className="flex justify-between py-1">
+                    <span className="text-slate-500">वेबसाईट:</span>
+                    <a href={viewingAd.target_url} target="_blank" rel="noreferrer" className="text-brand-blue hover:underline truncate max-w-[200px]">
+                      {viewingAd.target_url}
+                    </a>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+              <button
+                onClick={() => {
+                  const toEdit = viewingAd;
+                  setViewingAd(null);
+                  handleOpenEdit(toEdit);
+                }}
+                className="px-3.5 py-1.5 bg-brand-blue text-white rounded-lg hover:bg-brand-dark text-xs font-semibold inline-flex items-center gap-1 transition"
+              >
+                <Edit2 className="w-3.5 h-3.5" /> जाहिरात संपादित करा
+              </button>
+              <button
+                onClick={() => setViewingAd(null)}
+                className="px-4 py-1.5 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 text-xs font-semibold"
+              >
+                बंद करा
+              </button>
             </div>
           </div>
         </div>

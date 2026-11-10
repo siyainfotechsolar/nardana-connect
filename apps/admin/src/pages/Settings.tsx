@@ -8,7 +8,8 @@ import {
   Trash2, 
   X, 
   Smartphone, 
-  ExternalLink 
+  ExternalLink,
+  Eye 
 } from 'lucide-react';
 import { useToast } from '../components/Toast';
 
@@ -27,6 +28,7 @@ export const Settings: React.FC = () => {
   const [contacts, setContacts] = useState<EmergencyContact[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [viewingContact, setViewingContact] = useState<EmergencyContact | null>(null);
   const [nameMr, setNameMr] = useState('');
   const [nameEn, setNameEn] = useState('');
   const [phone, setPhone] = useState('');
@@ -144,15 +146,34 @@ export const Settings: React.FC = () => {
             <p className="p-4 text-xs text-slate-400 text-center">कोणतेही आपत्कालीन संपर्क नाहीत.</p>
           ) : (
             contacts.map((c) => (
-              <div key={c.id} className="p-3 flex items-center justify-between hover:bg-slate-50 transition text-xs">
+              <div 
+                key={c.id} 
+                onClick={() => setViewingContact(c)} 
+                className="p-3 flex items-center justify-between hover:bg-blue-50/70 transition cursor-pointer group text-xs"
+                title="तपशील पाहण्यासाठी क्लिक करा"
+              >
                 <div className="space-y-0.5">
-                  <p className="font-bold text-slate-800">{c.name_mr} ({c.name_en})</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-bold text-slate-800 group-hover:text-brand-blue transition">
+                      {c.name_mr} ({c.name_en})
+                    </p>
+                    <span className="text-[10px] text-brand-blue bg-blue-100 font-semibold px-2 py-0.2 rounded opacity-0 group-hover:opacity-100 transition">
+                      तपशील ↗
+                    </span>
+                  </div>
                   <p className="text-[11px] text-slate-500">{c.category}</p>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
                   <span className="font-mono font-bold text-brand-blue bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
                     {c.phone}
                   </span>
+                  <button
+                    onClick={() => setViewingContact(c)}
+                    className="p-1 text-slate-400 hover:text-brand-blue rounded"
+                    title="तपशील पहा"
+                  >
+                    <Eye className="w-3.5 h-3.5" />
+                  </button>
                   <button
                     onClick={() => handleDeleteContact(c.id, c.name_mr)}
                     className="p-1 text-slate-400 hover:text-rose-600 rounded"
@@ -313,6 +334,92 @@ export const Settings: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* View Emergency Contact Modal */}
+      {viewingContact && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white rounded-2xl max-w-sm w-full shadow-2xl overflow-hidden border border-slate-200">
+            <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-rose-100 rounded-lg text-rose-600">
+                  <PhoneCall className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-base text-slate-900 leading-tight">
+                    {viewingContact.name_mr}
+                  </h3>
+                  <p className="text-xs text-slate-500">{viewingContact.name_en}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setViewingContact(null)}
+                className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-200 transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4 text-xs text-slate-700">
+              <div className="p-3.5 bg-rose-50/70 rounded-xl border border-rose-200 flex items-center justify-between">
+                <div>
+                  <span className="text-[11px] text-rose-800 font-semibold block">तातडीचा दूरध्वनी क्रमांक</span>
+                  <span className="font-mono text-base font-bold text-rose-700">{viewingContact.phone}</span>
+                </div>
+                <a
+                  href={`tel:${viewingContact.phone}`}
+                  className="px-3 py-1.5 bg-rose-600 text-white rounded-lg font-bold text-xs hover:bg-rose-700 transition flex items-center gap-1"
+                >
+                  <PhoneCall className="w-3.5 h-3.5" /> टेस्ट कॉल
+                </a>
+              </div>
+
+              <div className="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-200 text-xs">
+                <div className="flex justify-between py-1 border-b border-slate-200">
+                  <span className="text-slate-500">प्रवर्ग:</span>
+                  <span className="font-bold text-slate-800">{viewingContact.category}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-200">
+                  <span className="text-slate-500">कार्यक्षेत्र:</span>
+                  <span className="font-bold text-brand-blue">नरडाणा गाव (४२५४०४)</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-200">
+                  <span className="text-slate-500">ॲपमध्ये स्थिती:</span>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                    सक्रिय (Active 24x7)
+                  </span>
+                </div>
+                <div className="flex justify-between py-1">
+                  <span className="text-slate-500">क्रम (Sort Order):</span>
+                  <span className="font-bold text-slate-700">{viewingContact.sort_order}</span>
+                </div>
+              </div>
+
+              <p className="text-[11px] text-slate-500 italic">
+                टीप: हा क्रमांक नरडाणा कनेक्ट ॲपच्या होम स्क्रीनवर व "आपत्कालीन" टॅबमध्ये गावकर्‍यांसाठी उपलब्ध आहे.
+              </p>
+            </div>
+
+            <div className="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+              <button
+                onClick={() => {
+                  const id = viewingContact.id;
+                  const name = viewingContact.name_mr;
+                  setViewingContact(null);
+                  handleDeleteContact(id, name);
+                }}
+                className="px-3 py-1.5 text-rose-600 hover:bg-rose-50 rounded-lg text-xs font-semibold inline-flex items-center gap-1 transition"
+              >
+                <Trash2 className="w-3.5 h-3.5" /> हटवा
+              </button>
+              <button
+                onClick={() => setViewingContact(null)}
+                className="px-4 py-1.5 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 text-xs font-semibold"
+              >
+                बंद करा
+              </button>
+            </div>
           </div>
         </div>
       )}

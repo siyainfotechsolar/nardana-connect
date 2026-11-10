@@ -222,16 +222,28 @@ export const Notices: React.FC = () => {
                 </tr>
               ) : (
                 filteredNotices.map((n) => (
-                  <tr key={n.id} className="hover:bg-slate-50/70 transition">
+                  <tr 
+                    key={n.id} 
+                    onClick={() => setViewingNotice(n)} 
+                    className="hover:bg-blue-50/70 transition cursor-pointer group"
+                    title="सविस्तर सूचना वाचण्यासाठी क्लिक करा"
+                  >
                     <td className="px-5 py-3.5">
-                      <p className="font-bold text-slate-800 flex items-center gap-1.5">
-                        <Bell className="w-3.5 h-3.5 text-brand-yellow flex-shrink-0" />
-                        <span>{n.title_mr}</span>
-                      </p>
-                      <p className="text-[11px] text-slate-500 truncate max-w-xs">{n.description_mr}</p>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-bold text-slate-800 flex items-center gap-1.5 group-hover:text-brand-blue transition">
+                            <Bell className="w-3.5 h-3.5 text-brand-yellow flex-shrink-0" />
+                            <span>{n.title_mr}</span>
+                          </p>
+                          <p className="text-[11px] text-slate-500 truncate max-w-xs">{n.description_mr}</p>
+                        </div>
+                        <span className="text-[10px] text-brand-blue bg-blue-100 font-semibold px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition mr-2">
+                          वाचा ↗
+                        </span>
+                      </div>
                     </td>
                     <td className="px-5 py-3.5 text-slate-600">
-                      <span className="flex items-center gap-1">
+                      <span className="flex items-center gap-1 font-semibold text-slate-700">
                         <MapPin className="w-3 h-3 text-brand-blue" /> {getVillageName(n.village_id)}
                       </span>
                     </td>
@@ -264,7 +276,7 @@ export const Notices: React.FC = () => {
                         {n.status === 'published' ? 'प्रसिद्ध' : n.status}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5 text-right space-x-1">
+                    <td className="px-5 py-3.5 text-right space-x-1" onClick={(e) => e.stopPropagation()}>
                       <button
                         onClick={() => setViewingNotice(n)}
                         className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded transition"

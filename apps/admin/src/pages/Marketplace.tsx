@@ -293,10 +293,22 @@ export const Marketplace: React.FC = () => {
                 </tr>
               ) : (
                 filteredItems.map((item) => (
-                  <tr key={item.id} className="hover:bg-slate-50/70 transition">
-                    <td className="px-5 py-3.5 font-bold text-slate-800 flex items-center gap-1.5">
-                      <ShoppingBag className="w-3.5 h-3.5 text-brand-green flex-shrink-0" />
-                      <span>{item.title}</span>
+                  <tr 
+                    key={item.id} 
+                    onClick={() => setViewingItem(item)} 
+                    className="hover:bg-blue-50/70 transition cursor-pointer group"
+                    title="सविस्तर माहिती पाहण्यासाठी क्लिक करा"
+                  >
+                    <td className="px-5 py-3.5">
+                      <div className="flex items-center justify-between">
+                        <div className="font-bold text-slate-800 flex items-center gap-1.5 group-hover:text-brand-blue transition">
+                          <ShoppingBag className="w-3.5 h-3.5 text-brand-green flex-shrink-0" />
+                          <span>{item.title}</span>
+                        </div>
+                        <span className="text-[10px] text-brand-blue bg-blue-100 font-semibold px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition mr-2">
+                          तपशील ↗
+                        </span>
+                      </div>
                     </td>
                     <td className="px-5 py-3.5 text-slate-600">{item.category}</td>
                     <td className="px-5 py-3.5 font-bold text-brand-blue">
@@ -334,7 +346,7 @@ export const Marketplace: React.FC = () => {
                         </span>
                       )}
                     </td>
-                    <td className="px-5 py-3.5 text-right space-x-1">
+                    <td className="px-5 py-3.5 text-right space-x-1" onClick={(e) => e.stopPropagation()}>
                       {item.status !== 'approved' && (
                         <button
                           onClick={() => updateStatus(item.id, 'approved')}
@@ -525,43 +537,134 @@ export const Marketplace: React.FC = () => {
       {/* View Modal */}
       {viewingItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-200 p-6 space-y-4">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-bold text-base text-slate-900 flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5 text-brand-green" />
-                {viewingItem.title}
-              </h3>
+          <div className="bg-white rounded-2xl max-w-lg w-full shadow-2xl overflow-hidden border border-slate-200">
+            <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-emerald-100 rounded-lg text-brand-green">
+                  <ShoppingBag className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-base text-slate-900 leading-tight">
+                    {viewingItem.title}
+                  </h3>
+                  <p className="text-xs text-slate-500">{viewingItem.category}</p>
+                </div>
+              </div>
               <button
                 onClick={() => setViewingItem(null)}
-                className="text-slate-400 hover:text-slate-600 p-1 rounded"
+                className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-200 transition"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="space-y-2 text-xs text-slate-700">
-              <p><strong>प्रवर्ग:</strong> {viewingItem.category}</p>
-              <p><strong>किंमत:</strong> ₹{Number(viewingItem.price).toLocaleString('en-IN')}</p>
-              <p><strong>विक्रेता:</strong> {viewingItem.seller_name}</p>
-              <p><strong>फोन:</strong> {viewingItem.phone}</p>
-              <p><strong>प्रकार:</strong> {viewingItem.listing_type === 'SELL' ? 'विक्री (Sell)' : 'हवे आहे (Wanted)'}</p>
-              <p><strong>वर्णन:</strong> {viewingItem.description}</p>
-              <p>
-                <strong>स्थिती:</strong>{' '}
-                <span className={`px-2 py-0.5 rounded font-bold ${
-                  viewingItem.is_sold ? 'bg-purple-100 text-purple-800' :
-                  viewingItem.status === 'approved' ? 'bg-emerald-100 text-emerald-800' :
-                  'bg-amber-100 text-amber-800'
-                }`}>
-                  {viewingItem.is_sold ? 'विक्री झाली (Sold)' : viewingItem.status}
-                </span>
-              </p>
+            <div className="p-6 space-y-4 text-xs text-slate-700 max-h-[75vh] overflow-y-auto">
+              {/* Price & Type Cards */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="p-3 bg-emerald-50/60 rounded-xl border border-emerald-100">
+                  <span className="text-[11px] text-slate-500 font-semibold block">अपेक्षित किंमत (Price)</span>
+                  <span className="text-lg font-black text-brand-blue">
+                    ₹{Number(viewingItem.price).toLocaleString('en-IN')}
+                  </span>
+                </div>
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                  <span className="text-[11px] text-slate-500 font-semibold block">प्रकार व स्थिती</span>
+                  <div className="flex gap-1.5 mt-1">
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      viewingItem.listing_type === 'SELL' ? 'bg-blue-100 text-blue-800' : 'bg-amber-100 text-amber-800'
+                    }`}>
+                      {viewingItem.listing_type === 'SELL' ? 'विक्री (SELL)' : 'हवे आहे (WANTED)'}
+                    </span>
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      viewingItem.is_sold ? 'bg-purple-100 text-purple-800' :
+                      viewingItem.status === 'approved' ? 'bg-emerald-100 text-emerald-800' :
+                      'bg-amber-100 text-amber-800'
+                    }`}>
+                      {viewingItem.is_sold ? 'विकले' : viewingItem.status}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Item Details */}
+              <div className="space-y-2 bg-slate-50/50 p-4 rounded-xl border border-slate-100">
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-500">प्रवर्ग (Category):</span>
+                  <span className="font-bold text-slate-800">{viewingItem.category}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-500">गाव (Village):</span>
+                  <span className="font-bold text-slate-800">नरडाणा (४२५४०४)</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-500">नोंदणी तारीख:</span>
+                  <span className="text-slate-600 font-mono">
+                    {new Date(viewingItem.created_at).toLocaleDateString('mr-IN')}
+                  </span>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div>
+                <p className="font-bold text-slate-800 mb-1">वस्तूचे सविस्तर वर्णन:</p>
+                <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-700 leading-relaxed whitespace-pre-line">
+                  {viewingItem.description || 'वर्णन उपलब्ध नाही.'}
+                </div>
+              </div>
+
+              {/* Seller Contact */}
+              <div className="p-3.5 bg-blue-50/60 rounded-xl border border-blue-200 flex items-center justify-between">
+                <div>
+                  <p className="text-[11px] text-blue-800 font-semibold">विक्रेता / ग्राहक माहिती</p>
+                  <p className="text-sm font-bold text-slate-800">{viewingItem.seller_name}</p>
+                  <p className="font-mono text-brand-blue font-bold">{viewingItem.phone}</p>
+                </div>
+                <div className="flex gap-2">
+                  <a
+                    href={`tel:${viewingItem.phone}`}
+                    className="px-3 py-1.5 bg-brand-blue text-white rounded-lg text-xs font-bold hover:bg-brand-dark transition flex items-center gap-1"
+                  >
+                    <Phone className="w-3.5 h-3.5" /> कॉल
+                  </a>
+                  <a
+                    href={`https://wa.me/91${viewingItem.phone}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-3 py-1.5 bg-brand-green text-white rounded-lg text-xs font-bold hover:bg-emerald-800 transition"
+                  >
+                    WhatsApp
+                  </a>
+                </div>
+              </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-3 border-t border-slate-100">
+            {/* Footer Actions */}
+            <div className="px-6 py-3.5 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+              <div className="flex gap-1.5">
+                {viewingItem.status !== 'approved' && (
+                  <button
+                    onClick={() => {
+                      updateStatus(viewingItem.id, 'approved');
+                      setViewingItem(null);
+                    }}
+                    className="px-3 py-1.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-xs font-semibold inline-flex items-center gap-1 transition"
+                  >
+                    <CheckCircle className="w-3.5 h-3.5" /> मंजूर करा
+                  </button>
+                )}
+                <button
+                  onClick={() => {
+                    toggleSold(viewingItem);
+                    setViewingItem(null);
+                  }}
+                  className="px-3 py-1.5 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-xs font-semibold transition"
+                >
+                  {viewingItem.is_sold ? 'पुन्हा विक्रीसाठी ठेवा' : 'विक्री झाली म्हणून चिन्हांकित करा'}
+                </button>
+              </div>
               <button
                 onClick={() => setViewingItem(null)}
-                className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 text-xs font-semibold"
+                className="px-4 py-1.5 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 text-xs font-semibold"
               >
                 बंद करा
               </button>

@@ -282,65 +282,83 @@ class HomeScreen extends ConsumerWidget {
             // Gram Panchayat Notice Card
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      AppColors.primaryBlue.withValues(alpha: 0.06),
-                      Colors.white,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
+              child: InkWell(
+                onTap: () {
+                  context.push('/notice-detail', extra: {
+                    'title_mr': 'पिण्याच्या पाण्याचे वेळापत्रक बदल',
+                    'title_en': 'Drinking Water Supply Interruption Notice',
+                    'desc_mr':
+                        'नरडाणा ग्रामस्थांना कळविण्यात येते की पाईपलाईन दुरुस्तीच्या कामामुळे उद्या सकाळी ७ ते १० दरम्यानच पाणीपुरवठा केला जाईल. कृपया नोंद घ्यावी.',
+                    'date': '१० नोव्हेंबर २०२६',
+                    'authority': 'ग्रामपंचायत कार्यालय, नरडाणा',
+                    'priority': 'high',
+                    'is_official': true,
+                  });
+                },
+                borderRadius: BorderRadius.circular(16),
+                child: Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.primaryBlue.withValues(alpha: 0.06),
+                        Colors.white,
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: AppColors.primaryBlue.withValues(alpha: 0.18)),
                   ),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.primaryBlue.withValues(alpha: 0.18)),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 2),
-                          decoration: BoxDecoration(
-                            color: AppColors.secondaryGreen,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Text(
-                            'ग्रामपंचायत सूचना',
-                            style: GoogleFonts.mukta(
-                              fontSize: 11,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: AppColors.secondaryGreen,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: Text(
+                              'ग्रामपंचायत सूचना',
+                              style: GoogleFonts.mukta(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
-                        ),
-                        const Spacer(),
-                        const Icon(Icons.water_drop_rounded,
-                            size: 16, color: Colors.blue),
-                        const SizedBox(width: 4),
-                        Text(
-                          'पाणी पुरवठा वेळापत्रक',
-                          style: GoogleFonts.mukta(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.blue.shade900,
+                          const Spacer(),
+                          const Icon(Icons.water_drop_rounded,
+                              size: 16, color: Colors.blue),
+                          const SizedBox(width: 4),
+                          Text(
+                            'पाणी पुरवठा वेळापत्रक',
+                            style: GoogleFonts.mukta(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.blue.shade900,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'नरडाणा ग्रामस्थांना कळविण्यात येते की पाईपलाईन दुरुस्तीच्या कामामुळे उद्या सकाळी ७ ते १० दरम्यानच पाणीपुरवठा केला जाईल.',
-                      style: GoogleFonts.mukta(
-                        fontSize: 13,
-                        color: AppColors.textPrimary,
-                        height: 1.35,
+                          const SizedBox(width: 6),
+                          const Icon(Icons.arrow_forward_ios_rounded,
+                              size: 11, color: AppColors.primaryBlue),
+                        ],
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 8),
+                      Text(
+                        'नरडाणा ग्रामस्थांना कळविण्यात येते की पाईपलाईन दुरुस्तीच्या कामामुळे उद्या सकाळी ७ ते १० दरम्यानच पाणीपुरवठा केला जाईल. (सविस्तर वाचण्यासाठी टॅप करा)',
+                        style: GoogleFonts.mukta(
+                          fontSize: 13,
+                          color: AppColors.textPrimary,
+                          height: 1.35,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

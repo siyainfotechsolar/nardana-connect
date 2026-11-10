@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { Village } from '../types/database';
-import { MapPin, Check, X, Edit2 } from 'lucide-react';
+import { MapPin, Check, X, Edit2, Eye } from 'lucide-react';
 import { useToast } from '../components/Toast';
 
 interface VillageFormData {
@@ -27,6 +27,7 @@ export const Villages: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingVillage, setEditingVillage] = useState<Village | null>(null);
+  const [viewingVillage, setViewingVillage] = useState<Village | null>(null);
   const [formData, setFormData] = useState<VillageFormData>(defaultFormData);
   const [submitting, setSubmitting] = useState(false);
   const { showToast } = useToast();
@@ -180,16 +181,28 @@ export const Villages: React.FC = () => {
                 </tr>
               ) : (
                 filteredVillages.map((v) => (
-                  <tr key={v.id} className="hover:bg-slate-50/70 transition">
-                    <td className="px-5 py-3.5 font-bold text-slate-800 flex items-center gap-1.5">
-                      <MapPin className="w-3.5 h-3.5 text-brand-green flex-shrink-0" />
-                      <span>{v.name_mr}</span>
+                  <tr 
+                    key={v.id} 
+                    onClick={() => setViewingVillage(v)} 
+                    className="hover:bg-blue-50/70 transition cursor-pointer group"
+                    title="सविस्तर गाव प्रोफाइल पाहण्यासाठी क्लिक करा"
+                  >
+                    <td className="px-5 py-3.5 font-bold text-slate-800">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5 group-hover:text-brand-blue transition">
+                          <MapPin className="w-3.5 h-3.5 text-brand-green flex-shrink-0" />
+                          <span>{v.name_mr}</span>
+                        </div>
+                        <span className="text-[10px] text-brand-blue bg-blue-100 font-semibold px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition mr-2">
+                          तपशील ↗
+                        </span>
+                      </div>
                     </td>
                     <td className="px-5 py-3.5 text-slate-600 font-medium">{v.name_en}</td>
                     <td className="px-5 py-3.5 text-slate-600">{v.taluka}</td>
                     <td className="px-5 py-3.5 text-slate-600">{v.district}</td>
                     <td className="px-5 py-3.5 text-slate-600 font-mono">{v.pincode}</td>
-                    <td className="px-5 py-3.5">
+                    <td className="px-5 py-3.5" onClick={(e) => e.stopPropagation()}>
                       <button
                         onClick={() => handleToggleStatus(v)}
                         title="स्थिती बदलण्यासाठी क्लिक करा"
@@ -203,14 +216,22 @@ export const Villages: React.FC = () => {
                         <span>{v.is_active ? 'सक्रिय' : 'निष्क्रिय'}</span>
                       </button>
                     </td>
-                    <td className="px-5 py-3.5 text-right space-x-1">
+                    <td className="px-5 py-3.5 text-right space-x-1" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        onClick={() => setViewingVillage(v)}
+                        className="px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:text-brand-blue hover:bg-blue-50 rounded-lg border border-slate-200 transition inline-flex items-center gap-1"
+                        title="तपशील पहा"
+                      >
+                        <Eye className="w-3.5 h-3.5" />
+                        <span>तपशील</span>
+                      </button>
                       <button
                         onClick={() => handleOpenEdit(v)}
                         className="px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:text-brand-blue hover:bg-blue-50 rounded-lg border border-slate-200 transition inline-flex items-center gap-1"
                         title="संपादित करा"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
-                        <span>तपशील बदला</span>
+                        <span>बदला</span>
                       </button>
                     </td>
                   </tr>
@@ -326,6 +347,93 @@ export const Villages: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* View Village Profile Modal */}
+      {viewingVillage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
+          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-200">
+            <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="p-2 bg-emerald-100 rounded-lg text-brand-green">
+                  <MapPin className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-base text-slate-900 leading-tight">
+                    {viewingVillage.name_mr} गाव प्रोफाइल
+                  </h3>
+                  <p className="text-xs text-slate-500">{viewingVillage.name_en} Profile</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setViewingVillage(null)}
+                className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-200 transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-4 text-xs text-slate-700">
+              <div className="p-3.5 bg-emerald-50 rounded-xl border border-emerald-200 flex items-center gap-2.5">
+                <Check className="w-4 h-4 text-emerald-700 flex-shrink-0" />
+                <span className="text-emerald-900 font-bold text-xs">
+                  अधिकृत कार्यक्षेत्र: नरडाणा गाव (पिनकोड: ४२५४०४)
+                </span>
+              </div>
+
+              <div className="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <div className="flex justify-between py-1 border-b border-slate-200">
+                  <span className="text-slate-500">गावाचे नाव (मराठी):</span>
+                  <span className="font-bold text-slate-900">{viewingVillage.name_mr}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-200">
+                  <span className="text-slate-500">Name (English):</span>
+                  <span className="font-semibold text-slate-800">{viewingVillage.name_en}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-200">
+                  <span className="text-slate-500">तालुका:</span>
+                  <span className="font-bold text-slate-800">{viewingVillage.taluka}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-200">
+                  <span className="text-slate-500">जिल्हा:</span>
+                  <span className="font-bold text-slate-800">{viewingVillage.district}</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-200">
+                  <span className="text-slate-500">पिनकोड (Postal PIN):</span>
+                  <span className="font-mono font-bold text-brand-blue text-sm">{viewingVillage.pincode}</span>
+                </div>
+                <div className="flex justify-between py-1">
+                  <span className="text-slate-500">स्थिती:</span>
+                  <span className="px-2 py-0.5 rounded text-[11px] font-bold bg-emerald-100 text-emerald-800">
+                    सक्रिय (Active)
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-3 bg-blue-50/70 border border-blue-200 rounded-xl text-slate-600 text-[11px] leading-relaxed">
+                नरडाणा कनेक्ट हे व्यासपीठ केवळ नरडाणा गावातील स्थानिक दुकाने, रोजगार, शेती अवजारे आणि ग्रामपंचायत सूचनांसाठी कार्यरत आहे.
+              </div>
+            </div>
+
+            <div className="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex items-center justify-between">
+              <button
+                onClick={() => {
+                  const toEdit = viewingVillage;
+                  setViewingVillage(null);
+                  handleOpenEdit(toEdit);
+                }}
+                className="px-3.5 py-1.5 bg-slate-100 text-slate-700 hover:bg-slate-200 rounded-lg text-xs font-semibold inline-flex items-center gap-1 transition"
+              >
+                <Edit2 className="w-3.5 h-3.5" /> माहिती बदला
+              </button>
+              <button
+                onClick={() => setViewingVillage(null)}
+                className="px-4 py-1.5 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 text-xs font-semibold"
+              >
+                बंद करा
+              </button>
+            </div>
           </div>
         </div>
       )}
