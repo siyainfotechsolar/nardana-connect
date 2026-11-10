@@ -25,9 +25,9 @@ const navItems = [
 
 export const Sidebar: React.FC = () => {
   return (
-    <aside className="w-64 bg-brand-dark text-white flex flex-col min-h-screen">
+    <aside className="w-64 bg-brand-dark text-white flex flex-col h-screen flex-shrink-0 select-none border-r border-white/5">
       {/* Brand Logo & Name */}
-      <div className="p-5 border-b border-white/10 flex items-center space-x-3">
+      <div className="p-5 border-b border-white/10 flex items-center space-x-3 flex-shrink-0">
         <img 
           src="/app-logo.png" 
           alt="Nardana Connect" 
@@ -53,17 +53,17 @@ export const Sidebar: React.FC = () => {
               }`
             }
           >
-            <item.icon className="w-4 h-4 text-brand-yellow" />
-            <span>{item.label}</span>
+            <item.icon className="w-4 h-4 text-brand-yellow flex-shrink-0" />
+            <span className="truncate">{item.label}</span>
           </NavLink>
         ))}
       </nav>
 
       {/* Footer Info & Developer Attribution */}
-      <div className="p-4 border-t border-white/10 space-y-2">
+      <div className="p-4 border-t border-white/10 space-y-2 flex-shrink-0 bg-brand-dark">
         <div className="text-xs text-slate-300 flex items-center space-x-2">
           <ShieldCheck className="w-4 h-4 text-brand-green flex-shrink-0" />
-          <span>आपलं गाव, आपली डिजिटल ओळख!</span>
+          <span className="text-[11px]">आपलं गाव, आपली डिजिटल ओळख!</span>
         </div>
         <div className="pt-2 border-t border-white/5 text-center">
           <p className="text-[10px] text-slate-400">Developed with ❤️ by</p>
@@ -73,4 +73,3 @@ export const Sidebar: React.FC = () => {
     </aside>
   );
 };
-
