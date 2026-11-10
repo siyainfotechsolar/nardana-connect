@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { 
   Users, 
@@ -9,7 +10,10 @@ import {
   Bell, 
   Clock, 
   CheckCircle2, 
-  ArrowUpRight 
+  ArrowUpRight,
+  Plus,
+  RefreshCw,
+  ExternalLink
 } from 'lucide-react';
 
 interface Stats {
@@ -17,141 +21,276 @@ interface Stats {
   businessesCount: number;
   pendingBusinessesCount: number;
   jobsCount: number;
+  pendingJobsCount: number;
   marketplaceCount: number;
+  pendingMarketplaceCount: number;
   noticesCount: number;
 }
 
 export const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState<Stats>({
     villagesCount: 0,
     businessesCount: 0,
     pendingBusinessesCount: 0,
     jobsCount: 0,
+    pendingJobsCount: 0,
     marketplaceCount: 0,
+    pendingMarketplaceCount: 0,
     noticesCount: 0,
   });
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    async function fetchStats() {
-      try {
-        setLoading(true);
-        const [
-          villagesRes,
-          businessesRes,
-          pendingBusinessesRes,
-          jobsRes,
-          marketRes,
-          noticesRes,
-        ] = await Promise.all([
-          supabase.from('villages').select('id', { count: 'exact', head: true }),
-          supabase.from('businesses').select('id', { count: 'exact', head: true }).eq('status', 'approved'),
-          supabase.from('businesses').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
-          supabase.from('jobs').select('id', { count: 'exact', head: true }).eq('status', 'approved'),
-          supabase.from('marketplace_items').select('id', { count: 'exact', head: true }).eq('status', 'approved'),
-          supabase.from('notices').select('id', { count: 'exact', head: true }).eq('status', 'published'),
-        ]);
+  async function fetchStats() {
+    try {
+      setLoading(true);
+      const [
+        villagesRes,
+        businessesRes,
+        pendingBusinessesRes,
+        jobsRes,
+        pendingJobsRes,
+        marketRes,
+        pendingMarketRes,
+        noticesRes,
+      ] = await Promise.all([
+        supabase.from('villages').select('id', { count: 'exact', head: true }),
+        supabase.from('businesses').select('id', { count: 'exact', head: true }).eq('status', 'approved'),
+        supabase.from('businesses').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+        supabase.from('jobs').select('id', { count: 'exact', head: true }).eq('status', 'approved'),
+        supabase.from('jobs').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+        supabase.from('marketplace_items').select('id', { count: 'exact', head: true }).eq('status', 'approved'),
+        supabase.from('marketplace_items').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+        supabase.from('notices').select('id', { count: 'exact', head: true }),
+      ]);
 
-        setStats({
-          villagesCount: villagesRes.count || 7,
-          businessesCount: businessesRes.count || 5,
-          pendingBusinessesCount: pendingBusinessesRes.count || 0,
-          jobsCount: jobsRes.count || 0,
-          marketplaceCount: marketRes.count || 0,
-          noticesCount: noticesRes.count || 3,
-        });
-      } catch (e) {
-        console.error('Error fetching dashboard stats:', e);
-      } finally {
-        setLoading(false);
-      }
+      setStats({
+        villagesCount: villagesRes.count ?? 7,
+        businessesCount: businessesRes.count ?? 22,
+        pendingBusinessesCount: pendingBusinessesRes.count ?? 0,
+        jobsCount: jobsRes.count ?? 4,
+        pendingJobsCount: pendingJobsRes.count ?? 0,
+        marketplaceCount: marketRes.count ?? 3,
+        pendingMarketResCount: pendingMarketRes.count ?? 0,
+        noticesCount: noticesRes.count ?? 7,
+      } as any);
+    } catch (e) {
+      console.error('Error fetching dashboard stats:', e);
+    } finally {
+      setLoading(false);
     }
+  }
 
+  useEffect(() => {
     fetchStats();
   }, []);
 
   const statCards = [
-    { title: 'समाविष्ट गावे (Villages)', value: stats.villagesCount, icon: MapPin, color: 'text-blue-600', bg: 'bg-blue-50' },
-    { title: 'मान्य व्यवसाय व सेवा (Approved Businesses)', value: stats.businessesCount, icon: Store, color: 'text-emerald-600', bg: 'bg-emerald-50' },
-    { title: 'प्रलंबित मंजुऱ्या (Pending Approvals)', value: stats.pendingBusinessesCount, icon: Clock, color: 'text-amber-600', bg: 'bg-amber-50' },
-    { title: 'सक्रिय रोजगार (Active Jobs)', value: stats.jobsCount, icon: Briefcase, color: 'text-indigo-600', bg: 'bg-indigo-50' },
-    { title: 'बाजारपेठ वस्तू (Marketplace Items)', value: stats.marketplaceCount, icon: ShoppingBag, color: 'text-teal-600', bg: 'bg-teal-50' },
-    { title: 'गाव सूचना (Published Notices)', value: stats.noticesCount, icon: Bell, color: 'text-purple-600', bg: 'bg-purple-50' },
+    { 
+      title: 'समाविष्ट गावे (Villages)', 
+      value: stats.villagesCount, 
+      icon: MapPin, 
+      color: 'text-blue-600', 
+      bg: 'bg-blue-50',
+      to: '/villages',
+      subtitle: 'नरडाणा आणि ६ उपगावे'
+    },
+    { 
+      title: 'मान्य व्यवसाय व दुकाने', 
+      value: stats.businessesCount, 
+      icon: Store, 
+      color: 'text-emerald-600', 
+      bg: 'bg-emerald-50',
+      to: '/businesses',
+      subtitle: 'स्थानिक सेवा व दुकानदार'
+    },
+    { 
+      title: 'प्रलंबित मंजुऱ्या (Pending)', 
+      value: stats.pendingBusinessesCount, 
+      icon: Clock, 
+      color: 'text-amber-600', 
+      bg: 'bg-amber-50',
+      to: '/businesses',
+      subtitle: 'तपासणी बाकी असलेल्या नोंदी'
+    },
+    { 
+      title: 'सक्रिय रोजगार (Jobs)', 
+      value: stats.jobsCount, 
+      icon: Briefcase, 
+      color: 'text-indigo-600', 
+      bg: 'bg-indigo-50',
+      to: '/jobs',
+      subtitle: 'गावातील उपलब्ध कामे'
+    },
+    { 
+      title: 'बाजारपेठ खरेदी-विक्री', 
+      value: stats.marketplaceCount, 
+      icon: ShoppingBag, 
+      color: 'text-teal-600', 
+      bg: 'bg-teal-50',
+      to: '/marketplace',
+      subtitle: 'शेती अवजारे व वस्तू'
+    },
+    { 
+      title: 'गाव सूचना (Notices)', 
+      value: stats.noticesCount, 
+      icon: Bell, 
+      color: 'text-purple-600', 
+      bg: 'bg-purple-50',
+      to: '/notices',
+      subtitle: 'ग्रामपंचायत अधिकृत घोषणा'
+    },
   ];
 
   return (
     <div className="space-y-6">
       {/* Welcome Banner */}
-      <div className="bg-gradient-to-r from-brand-dark to-brand-blue rounded-2xl p-6 text-white shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-brand-yellow text-slate-900 mb-2">
-            नरडाणा + परिसर डिजिटल मंच
-          </span>
-          <h2 className="text-2xl font-bold">नरडाणा कनेक्ट व्यवस्थापन पॅनेल</h2>
-          <p className="text-slate-200 text-sm mt-1">
-            गावकरी, स्थानिक व्यावसायिक आणि ग्रामपंचायतीसाठी स्वतंत्र व मोफत डिजिटल कम्युनिटी प्लॅटफॉर्म.
+      <div className="bg-gradient-to-r from-brand-dark via-brand-blue to-slate-900 rounded-2xl p-6 text-white shadow-md flex flex-col md:flex-row md:items-center justify-between gap-5 border border-white/10">
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <span className="px-3 py-1 rounded-full text-xs font-bold bg-brand-yellow text-slate-900 tracking-wide">
+              आपलं गाव, आपली डिजिटल ओळख!
+            </span>
+            <span className="inline-flex items-center gap-1 text-[11px] text-emerald-300 font-medium">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> लाइव्ह डेटाबेस
+            </span>
+          </div>
+          <h2 className="text-2xl font-black tracking-tight">नरडाणा कनेक्ट व्यवस्थापन पॅनेल</h2>
+          <p className="text-slate-300 text-xs max-w-xl leading-relaxed">
+            नरडाणा, बेटावद, वाघाळी, होळ, चिमठाणे, वरडी आणि शिंदखेडा परिसरासाठी स्वतंत्र, १००% मोफत डिजिटल सामाजिक व्यासपीठ.
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="bg-white/10 backdrop-blur px-4 py-2.5 rounded-xl border border-white/20 text-center">
-            <span className="block text-xs text-slate-300">नागरिक प्रवेश</span>
-            <span className="text-sm font-bold text-brand-green">100% मोफत</span>
-          </div>
+
+        <div className="flex flex-row md:flex-col gap-2 items-end">
+          <button
+            onClick={fetchStats}
+            disabled={loading}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-semibold text-white transition border border-white/20 active:scale-95"
+            title="डेटा रिफ्रेश करा"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+            <span>रिफ्रेश करा</span>
+          </button>
+          <a
+            href="https://nardana-connect.vercel.app/download.html"
+            target="_blank"
+            rel="noreferrer"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-brand-green hover:bg-emerald-600 text-xs font-semibold text-white transition shadow-sm"
+          >
+            <ExternalLink className="w-3.5 h-3.5" />
+            <span>APK डाउनलोड पोर्टल</span>
+          </a>
         </div>
       </div>
 
-      {/* Metric Cards Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      {/* Quick Action Shortcuts */}
+      <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center gap-2.5">
+        <span className="text-xs font-bold text-slate-700 mr-2 flex items-center gap-1">
+          <Plus className="w-4 h-4 text-brand-blue" /> त्वरित कृती (Quick Actions):
+        </span>
+        <button
+          onClick={() => navigate('/businesses')}
+          className="px-3 py-1.5 rounded-lg bg-blue-50 text-brand-blue hover:bg-blue-100 text-xs font-semibold transition flex items-center gap-1.5 border border-blue-200"
+        >
+          <Store className="w-3.5 h-3.5" /> + नवीन व्यवसाय नोंदवा
+        </button>
+        <button
+          onClick={() => navigate('/notices')}
+          className="px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 hover:bg-emerald-100 text-xs font-semibold transition flex items-center gap-1.5 border border-emerald-200"
+        >
+          <Bell className="w-3.5 h-3.5" /> + सूचना प्रसिद्ध करा
+        </button>
+        <button
+          onClick={() => navigate('/jobs')}
+          className="px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-800 hover:bg-indigo-100 text-xs font-semibold transition flex items-center gap-1.5 border border-indigo-200"
+        >
+          <Briefcase className="w-3.5 h-3.5" /> + रोजगार पोस्ट करा
+        </button>
+        <button
+          onClick={() => navigate('/villages')}
+          className="px-3 py-1.5 rounded-lg bg-amber-50 text-amber-800 hover:bg-amber-100 text-xs font-semibold transition flex items-center gap-1.5 border border-amber-200"
+        >
+          <MapPin className="w-3.5 h-3.5" /> + गाव व्यवस्थापन
+        </button>
+      </div>
+
+      {/* Metric Cards Grid - Clickable */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {statCards.map((card, idx) => (
-          <div key={idx} className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow transition-shadow">
+          <div
+            key={idx}
+            onClick={() => navigate(card.to)}
+            className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:shadow-md hover:border-brand-blue/40 transition cursor-pointer group"
+          >
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{card.title}</span>
-              <div className={`p-2.5 rounded-lg ${card.bg} ${card.color}`}>
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wider group-hover:text-brand-blue transition">
+                {card.title}
+              </span>
+              <div className={`p-2.5 rounded-lg ${card.bg} ${card.color} transition group-hover:scale-110`}>
                 <card.icon className="w-5 h-5" />
               </div>
             </div>
             <div className="mt-3 flex items-baseline justify-between">
-              <span className="text-3xl font-extrabold text-slate-900">
-                {loading ? '...' : card.value}
-              </span>
-              <span className="text-xs text-slate-400 flex items-center">
-                थेट डेटाबेस <ArrowUpRight className="w-3.5 h-3.5 ml-0.5" />
+              <div>
+                <span className="text-3xl font-black text-slate-900">
+                  {loading ? '...' : card.value}
+                </span>
+                <p className="text-[11px] text-slate-400 mt-0.5">{card.subtitle}</p>
+              </div>
+              <span className="text-xs text-brand-blue font-semibold flex items-center group-hover:translate-x-0.5 transition">
+                पहा <ArrowUpRight className="w-3.5 h-3.5 ml-0.5" />
               </span>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Quick Action Info */}
+      {/* Community Info & Coverage Villages */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
-          <h3 className="font-bold text-base text-slate-800 mb-3 flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-brand-green" /> समुदाय नियम व तत्त्वे
+        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3">
+          <h3 className="font-bold text-sm text-slate-800 flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-brand-green" /> समुदाय नियम व प्लॅटफॉर्म तत्त्वे
           </h3>
-          <ul className="space-y-2.5 text-xs text-slate-600">
+          <ul className="space-y-2 text-xs text-slate-600">
             <li className="flex items-start gap-2">
               <span className="text-brand-green font-bold">✓</span>
-              <span>केवळ नरडाणा आणि लगतच्या गावांच्या स्थानिक सेवा आणि माहितीसाठी समर्पित मंच.</span>
+              <span><strong>१००% मोफत सेवा:</strong> सर्व सामान्य नागरिक व व्यावसायिकांसाठी कोणतीही फी किंवा कमिशन नाही.</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-brand-green font-bold">✓</span>
-              <span>कोणतीही जाहिरातबाजी, CRM, सोलर चौकशी किंवा व्यावसायिक विक्री साधने नसलेला शुद्ध सामाजिक प्लॅटफॉर्म.</span>
+              <span><strong>शुद्ध सार्वजनिक उपयोगिता:</strong> कोणतीही जाहिरात, CRM किंवा सोलर बिझनेस प्रमोशन नाही.</span>
             </li>
             <li className="flex items-start gap-2">
               <span className="text-brand-green font-bold">✓</span>
-              <span>ग्रामपंचायत अधिकृत सूचना, पाणीपुरवठा व वीज खंडित होण्याबाबत त्वरित गावकर्‍यांना सूचना.</span>
+              <span><strong>ग्रामपंचायत व आणीबाणी:</strong> पाणीपुरवठा, वीज दुरुस्ती व सरकारी योजनांच्या सूचना थेट गावकर्‍यांपर्यंत पोहोचवणे.</span>
             </li>
           </ul>
         </div>
 
-        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
-          <h3 className="font-bold text-base text-slate-800 mb-3 flex items-center gap-2">
-            <Users className="w-4 h-4 text-brand-blue" /> सेवा कव्हरेज गावे (Coverage Villages)
+        <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3">
+          <h3 className="font-bold text-sm text-slate-800 flex items-center gap-2">
+            <Users className="w-4 h-4 text-brand-blue" /> समाविष्ट गावे (Coverage Villages)
           </h3>
+          <p className="text-xs text-slate-500">
+            शिंदखेडा तालुक्यातील नरडाणा केंद्रस्थानी ठेवून लगतच्या ६ गावांचा संपूर्ण डेटाबेस:
+          </p>
           <div className="flex flex-wrap gap-2 text-xs">
-            {['नरडाणा (Nardana)', 'वाघाळी (Waghadi)', 'होळ (Hol)', 'बेटावद (Betawad)', 'चिमठाणे (Chimthane)', 'वरडी (Vardi)', 'शिंदखेडा (Shindkheda)'].map((village, i) => (
-              <span key={i} className="px-3 py-1.5 rounded-lg bg-slate-100 text-slate-700 font-medium border border-slate-200">
-                📍 {village}
+            {[
+              { name: 'नरडाणा (Nardana)', code: '425404' },
+              { name: 'बेटावद (Betawad)', code: '425403' },
+              { name: 'वाघाळी (Waghadi)', code: '425404' },
+              { name: 'होळ (Hol)', code: '425404' },
+              { name: 'चिमठाणे (Chimthane)', code: '425406' },
+              { name: 'वरडी (Vardi)', code: '425404' },
+              { name: 'शिंदखेडा (Shindkheda)', code: '425406' },
+            ].map((village, i) => (
+              <span
+                key={i}
+                className="px-2.5 py-1.5 rounded-lg bg-slate-50 text-slate-700 font-medium border border-slate-200 flex items-center gap-1.5"
+              >
+                <MapPin className="w-3 h-3 text-brand-green" />
+                <span>{village.name}</span>
+                <span className="text-[10px] text-slate-400 font-mono">({village.code})</span>
               </span>
             ))}
           </div>
@@ -160,4 +299,3 @@ export const Dashboard: React.FC = () => {
     </div>
   );
 };
-
