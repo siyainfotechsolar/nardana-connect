@@ -9,6 +9,7 @@ import {
   ShoppingBag, 
   Bell, 
   Megaphone,
+  Smartphone,
   Settings,
   ShieldCheck
 } from 'lucide-react';
@@ -22,6 +23,7 @@ const navItems = [
   { to: '/marketplace', label: 'बाजारपेठ (Marketplace)', icon: ShoppingBag },
   { to: '/notices', label: 'गाव सूचना (Notices)', icon: Bell },
   { to: '/advertisements', label: 'जाहिराती (Advertisements)', icon: Megaphone },
+  { to: '/app-update', label: 'ॲप अपडेट (App Update)', icon: Smartphone },
   { to: '/settings', label: 'सेटिंग्ज (Settings)', icon: Settings },
 ];
 

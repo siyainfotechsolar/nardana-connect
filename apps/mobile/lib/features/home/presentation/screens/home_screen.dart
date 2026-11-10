@@ -9,10 +9,67 @@ import 'package:nardana_connect/features/village/presentation/screens/village_se
 import 'package:nardana_connect/features/advertisements/presentation/widgets/home_ad_carousel.dart';
 import 'package:nardana_connect/features/advertisements/presentation/widgets/sponsored_ad_card.dart';
 import 'package:nardana_connect/features/advertisements/providers/advertisement_provider.dart';
+import 'package:nardana_connect/features/app_update/services/app_update_service.dart';
+import 'package:nardana_connect/features/app_update/presentation/widgets/optional_update_dialog.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkAppUpdates();
+    });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _checkAppUpdates(forceRefresh: true);
+    }
+  }
+
+  Future<void> _checkAppUpdates({bool forceRefresh = false}) async {
+    final result = await AppUpdateService.instance.checkUpdateStatus(forceRefresh: forceRefresh);
+    if (!mounted) return;
+
+    if (result.status == AppUpdateStatus.maintenanceMode && result.config != null) {
+      context.go('/maintenance', extra: result.config);
+      return;
+    }
+
+    if (result.status == AppUpdateStatus.forceUpdateRequired && result.config != null) {
+      context.go('/force-update', extra: {
+        'config': result.config,
+        'installedVersion': result.installedVersion,
+        'installedBuildNumber': result.installedBuildNumber,
+      });
+      return;
+    }
+
+    if (result.status == AppUpdateStatus.optionalUpdateAvailable && result.config != null) {
+      OptionalUpdateDialog.show(
+        context,
+        config: result.config!,
+        installedVersion: result.installedVersion,
+        installedBuildNumber: result.installedBuildNumber,
+      );
+    }
+  }
 
   void _showVillageDialog(BuildContext context) {
     showDialog(
@@ -29,7 +86,7 @@ class HomeScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final selectedVillage = ref.watch(selectedVillageProvider);
 

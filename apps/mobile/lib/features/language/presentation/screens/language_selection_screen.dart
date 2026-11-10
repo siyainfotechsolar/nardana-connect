@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nardana_connect/core/constants/app_colors.dart';
 import 'package:nardana_connect/core/localization/locale_provider.dart';
+import 'package:nardana_connect/core/navigation/app_back_scope.dart';
 
 class LanguageSelectionScreen extends ConsumerStatefulWidget {
   const LanguageSelectionScreen({super.key});
@@ -28,7 +29,9 @@ class _LanguageSelectionScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return AppBackScope(
+      fallbackRoute: '/welcome',
+      child: Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
@@ -113,8 +116,9 @@ class _LanguageSelectionScreenState
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildLanguageCard({
     required String title,

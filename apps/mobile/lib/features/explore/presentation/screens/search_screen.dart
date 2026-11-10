@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:nardana_connect/core/constants/app_colors.dart';
 import 'package:nardana_connect/core/localization/app_localizations.dart';
+import 'package:nardana_connect/core/navigation/app_back_scope.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -113,7 +114,17 @@ class _SearchScreenState extends State<SearchScreen> {
                 item['village']!.toLowerCase().contains(q);
           }).toList();
 
-    return Scaffold(
+    return AppBackScope(
+      fallbackRoute: '/home',
+      onWillPop: () async {
+        if (_query.isNotEmpty) {
+          _searchController.clear();
+          setState(() => _query = '');
+          return false; // Intercepted: cleared query before leaving
+        }
+        return true; // Query empty: proceed to navigate back
+      },
+      child: Scaffold(
       backgroundColor: AppColors.surface,
       appBar: AppBar(
         title: TextField(
@@ -216,6 +227,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 );
               },
             ),
+      ),
     );
   }
 }

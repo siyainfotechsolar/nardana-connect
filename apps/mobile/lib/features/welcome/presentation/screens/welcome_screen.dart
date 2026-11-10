@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nardana_connect/core/constants/app_colors.dart';
 import 'package:nardana_connect/core/localization/app_localizations.dart';
+import 'package:nardana_connect/core/localization/locale_provider.dart';
+import 'package:nardana_connect/core/navigation/back_button_handler.dart';
 
 class WelcomeScreen extends ConsumerWidget {
   const WelcomeScreen({super.key});
@@ -11,8 +13,16 @@ class WelcomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final currentLocale = ref.watch(localeProvider);
+    final isMr = currentLocale.languageCode == 'mr';
 
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        await BackButtonHandler.handleHomeBackPress(context, isMr: isMr);
+      },
+      child: Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
@@ -127,7 +137,26 @@ class WelcomeScreen extends ConsumerWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 10),
+
+              OutlinedButton.icon(
+                onPressed: () => context.push('/login'),
+                icon: const Icon(Icons.login_rounded, size: 20, color: AppColors.primaryBlue),
+                label: Text(
+                  'नागरिक लॉगिन (Citizen Login)',
+                  style: GoogleFonts.mukta(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryBlue,
+                  ),
+                ),
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(48),
+                  side: const BorderSide(color: AppColors.primaryBlue, width: 1.5),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                ),
+              ),
+              const SizedBox(height: 14),
 
               Center(
                 child: Row(
@@ -152,8 +181,9 @@ class WelcomeScreen extends ConsumerWidget {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildFeatureRow({
     required IconData icon,

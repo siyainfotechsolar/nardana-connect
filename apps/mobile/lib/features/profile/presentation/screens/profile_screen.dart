@@ -134,6 +134,30 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                   const Divider(height: 1),
                   ListTile(
+                    leading: const Icon(Icons.how_to_vote_rounded, color: AppColors.primaryBlue),
+                    title: Text(
+                      'ग्रामपंचायत निवडणूक व उमेदवार',
+                      style: GoogleFonts.mukta(fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: Text(
+                      'उमेदवार निर्देशिका व माहिती',
+                      style: GoogleFonts.mukta(fontSize: 12, color: AppColors.textSecondary),
+                    ),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => context.push('/election'),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
+                    leading: const Icon(Icons.settings_outlined, color: AppColors.primaryBlue),
+                    title: Text(
+                      'ॲप सेटिंग्ज (Settings)',
+                      style: GoogleFonts.mukta(fontWeight: FontWeight.w600),
+                    ),
+                    trailing: const Icon(Icons.chevron_right_rounded),
+                    onTap: () => context.push('/settings'),
+                  ),
+                  const Divider(height: 1),
+                  ListTile(
                     leading: const Icon(Icons.help_outline_rounded,
                         color: AppColors.primaryBlue),
                     title: Text(

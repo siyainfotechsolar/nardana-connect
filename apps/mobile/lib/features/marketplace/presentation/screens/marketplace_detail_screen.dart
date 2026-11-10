@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:nardana_connect/core/constants/app_colors.dart';
+import 'package:nardana_connect/core/navigation/app_back_scope.dart';
+import 'package:nardana_connect/core/navigation/back_button_handler.dart';
 
 class MarketplaceDetailScreen extends StatelessWidget {
   final Map<String, dynamic> item;
@@ -51,9 +53,15 @@ class MarketplaceDetailScreen extends StatelessWidget {
     final desc = item['desc'] ?? item['description'] ?? 'ही वस्तू नरडाणा गावात थेट विक्रीसाठी उपलब्ध आहे.';
     final imageUrl = item['image_url'] as String?;
 
-    return Scaffold(
-      backgroundColor: AppColors.surface,
-      appBar: AppBar(
+    return AppBackScope(
+      fallbackRoute: '/marketplace',
+      child: Scaffold(
+        backgroundColor: AppColors.surface,
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => BackButtonHandler.safePop(context, fallbackRoute: '/marketplace'),
+          ),
         title: Text(
           'वस्तू तपशील',
           style: GoogleFonts.mukta(fontWeight: FontWeight.bold),
@@ -352,8 +360,9 @@ class MarketplaceDetailScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildPlaceholder() {
     return Container(

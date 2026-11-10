@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:nardana_connect/core/constants/app_colors.dart';
 import 'package:nardana_connect/core/localization/locale_provider.dart';
+import 'package:nardana_connect/core/navigation/app_back_scope.dart';
+import 'package:nardana_connect/core/navigation/back_button_handler.dart';
 import 'package:nardana_connect/features/advertisements/models/advertisement_model.dart';
 import 'package:nardana_connect/features/advertisements/services/advertisement_service.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -59,9 +61,15 @@ class _AdvertisementDetailScreenState extends ConsumerState<AdvertisementDetailS
     final title = ad.localizedTitle(locale.languageCode);
     final description = ad.localizedDescription(locale.languageCode);
 
-    return Scaffold(
-      backgroundColor: AppColors.surface,
-      appBar: AppBar(
+    return AppBackScope(
+      fallbackRoute: '/home',
+      child: Scaffold(
+        backgroundColor: AppColors.surface,
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => BackButtonHandler.safePop(context, fallbackRoute: '/home'),
+          ),
         title: Text(
           'जाहिरात तपशील',
           style: GoogleFonts.mukta(fontWeight: FontWeight.bold),
@@ -379,7 +387,8 @@ class _AdvertisementDetailScreenState extends ConsumerState<AdvertisementDetailS
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
 

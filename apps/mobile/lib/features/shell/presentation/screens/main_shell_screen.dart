@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nardana_connect/core/constants/app_colors.dart';
 import 'package:nardana_connect/core/localization/app_localizations.dart';
+import 'package:nardana_connect/core/localization/locale_provider.dart';
+import 'package:nardana_connect/core/navigation/back_button_handler.dart';
 import 'package:nardana_connect/features/home/presentation/screens/home_screen.dart';
 import 'package:nardana_connect/features/explore/presentation/screens/explore_screen.dart';
 import 'package:nardana_connect/features/post/presentation/screens/post_screen.dart';
 import 'package:nardana_connect/features/notices/presentation/screens/notices_screen.dart';
 import 'package:nardana_connect/features/profile/presentation/screens/profile_screen.dart';
 
-class MainShellScreen extends StatefulWidget {
+class MainShellScreen extends ConsumerStatefulWidget {
   const MainShellScreen({super.key});
 
   @override
-  State<MainShellScreen> createState() => _MainShellScreenState();
+  ConsumerState<MainShellScreen> createState() => _MainShellScreenState();
 }
 
-class _MainShellScreenState extends State<MainShellScreen> {
+class _MainShellScreenState extends ConsumerState<MainShellScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _screens = const [
@@ -28,8 +31,33 @@ class _MainShellScreenState extends State<MainShellScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final currentLocale = ref.watch(localeProvider);
+    final isMr = currentLocale.languageCode == 'mr';
 
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+
+        // 1. If keyboard is up, dismiss it
+        final focus = FocusScope.of(context);
+        if (focus.hasFocus) {
+          focus.unfocus();
+          return;
+        }
+
+        // 2. If user is on an inner tab (Explore, Post, Notices, Profile), return to Home tab
+        if (_currentIndex != 0) {
+          setState(() {
+            _currentIndex = 0;
+          });
+          return;
+        }
+
+        // 3. User is on Home tab: double back press with Marathi Toast and Exit Confirmation Dialog
+        await BackButtonHandler.handleHomeBackPress(context, isMr: isMr);
+      },
+      child: Scaffold(
       body: IndexedStack(
         index: _currentIndex,
         children: _screens,
@@ -99,6 +127,7 @@ class _MainShellScreenState extends State<MainShellScreen> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

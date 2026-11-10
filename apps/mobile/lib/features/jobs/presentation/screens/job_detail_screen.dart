@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:nardana_connect/core/constants/app_colors.dart';
+import 'package:nardana_connect/core/navigation/app_back_scope.dart';
+import 'package:nardana_connect/core/navigation/back_button_handler.dart';
 
 class JobDetailScreen extends StatelessWidget {
   final Map<String, dynamic> job;
@@ -50,9 +52,15 @@ class JobDetailScreen extends StatelessWidget {
     final phone = job['phone'] ?? job['contact_number'] ?? '';
     final desc = job['desc'] ?? job['description'] ?? 'या पदासाठी स्थानिक उमेदवाराची आवश्यकता आहे.';
 
-    return Scaffold(
-      backgroundColor: AppColors.surface,
-      appBar: AppBar(
+    return AppBackScope(
+      fallbackRoute: '/jobs',
+      child: Scaffold(
+        backgroundColor: AppColors.surface,
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => BackButtonHandler.safePop(context, fallbackRoute: '/jobs'),
+          ),
         title: Text(
           'नोकरी तपशील',
           style: GoogleFonts.mukta(fontWeight: FontWeight.bold),
@@ -345,8 +353,9 @@ class JobDetailScreen extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildInfoRow({
     required IconData icon,
@@ -390,3 +399,4 @@ class JobDetailScreen extends StatelessWidget {
     );
   }
 }
+

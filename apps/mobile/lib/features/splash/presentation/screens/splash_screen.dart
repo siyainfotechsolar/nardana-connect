@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nardana_connect/core/constants/app_colors.dart';
+import 'package:nardana_connect/features/app_update/services/app_update_service.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -19,8 +20,34 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> _checkNextScreen() async {
-    await Future.delayed(const Duration(milliseconds: 1800));
+    // Give splash branding visual time, while checking update status concurrently
+    final checkFuture = AppUpdateService.instance.checkUpdateStatus();
+    await Future.wait([
+      Future.delayed(const Duration(milliseconds: 1600)),
+      checkFuture,
+    ]);
+
     if (!mounted) return;
+
+    final updateResult = await checkFuture;
+
+    if (updateResult.status == AppUpdateStatus.maintenanceMode && updateResult.config != null) {
+      if (mounted) {
+        context.go('/maintenance', extra: updateResult.config);
+      }
+      return;
+    }
+
+    if (updateResult.status == AppUpdateStatus.forceUpdateRequired && updateResult.config != null) {
+      if (mounted) {
+        context.go('/force-update', extra: {
+          'config': updateResult.config,
+          'installedVersion': updateResult.installedVersion,
+          'installedBuildNumber': updateResult.installedBuildNumber,
+        });
+      }
+      return;
+    }
 
     final prefs = await SharedPreferences.getInstance();
     final hasChosenLang = prefs.getBool('language_selected') ?? false;

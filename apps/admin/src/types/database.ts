@@ -119,4 +119,45 @@ export interface AdvertisementEvent {
   created_at: string;
 }
 
+export interface AppUpdateConfig {
+  id: string;
+  platform: string;
+  latest_version: string;
+  latest_build_number: number;
+  minimum_supported_version: string;
+  minimum_supported_build: number;
+  force_update_enabled: boolean;
+  optional_update_enabled: boolean;
+  update_title_mr: string;
+  update_title_en: string;
+  update_message_mr: string;
+  update_message_en: string;
+  release_notes_mr: string;
+  release_notes_en: string;
+  play_store_url: string;
+  apk_download_url: string;
+  maintenance_mode: boolean;
+  maintenance_message_mr: string;
+  maintenance_message_en: string;
+  updated_at: string;
+  updated_by: string;
+}
+
+export interface AppUpdateHistory {
+  id: string;
+  config_id?: string;
+  platform: string;
+  latest_version: string;
+  latest_build_number: number;
+  minimum_supported_version: string;
+  minimum_supported_build: number;
+  force_update_enabled: boolean;
+  optional_update_enabled: boolean;
+  maintenance_mode: boolean;
+  change_summary?: string;
+  updated_by: string;
+  created_at: string;
+}
+
+
 

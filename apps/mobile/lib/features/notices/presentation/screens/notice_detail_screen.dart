@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:nardana_connect/core/constants/app_colors.dart';
+import 'package:nardana_connect/core/navigation/app_back_scope.dart';
+import 'package:nardana_connect/core/navigation/back_button_handler.dart';
 
 class NoticeDetailScreen extends StatelessWidget {
   final Map<String, dynamic> notice;
@@ -41,9 +44,15 @@ class NoticeDetailScreen extends StatelessWidget {
     final isEmergency = priority == 'emergency';
     final isHigh = priority == 'high';
 
-    return Scaffold(
-      backgroundColor: AppColors.surface,
-      appBar: AppBar(
+    return AppBackScope(
+      fallbackRoute: '/notices',
+      child: Scaffold(
+        backgroundColor: AppColors.surface,
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => BackButtonHandler.safePop(context, fallbackRoute: '/notices'),
+          ),
         title: Text(
           'गाव सूचना तपशील',
           style: GoogleFonts.mukta(fontWeight: FontWeight.bold),
@@ -346,10 +355,37 @@ class NoticeDetailScreen extends StatelessWidget {
               ),
             ),
 
+            const SizedBox(height: 10),
+
+            OutlinedButton.icon(
+              onPressed: () {
+                context.push('/pdf-viewer', extra: {
+                  'title': titleMr,
+                  'url': 'https://zrnukpkufwrexrvysmpw.supabase.co/storage/v1/object/public/notice-attachments/notice.pdf',
+                  'fallbackRoute': '/notice-detail',
+                });
+              },
+              icon: const Icon(Icons.picture_as_pdf_rounded, size: 20, color: Colors.red),
+              label: const Text('अधिकृत PDF सूचनापत्र पहा (View PDF)'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.red.shade700,
+                minimumSize: const Size.fromHeight(48),
+                side: BorderSide(color: Colors.red.shade300, width: 1.5),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                textStyle: GoogleFonts.mukta(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+
             const SizedBox(height: 16),
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }

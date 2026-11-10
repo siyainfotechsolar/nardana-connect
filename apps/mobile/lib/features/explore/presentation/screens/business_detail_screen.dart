@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:nardana_connect/core/constants/app_colors.dart';
 import 'package:nardana_connect/core/localization/app_localizations.dart';
+import 'package:nardana_connect/core/navigation/app_back_scope.dart';
+import 'package:nardana_connect/core/navigation/back_button_handler.dart';
 
 class BusinessDetailScreen extends StatelessWidget {
   final Map<String, dynamic> business;
@@ -50,9 +52,15 @@ class BusinessDetailScreen extends StatelessWidget {
     final desc = business['desc'] ?? business['description'] ?? 'उत्कृष्ट सेवा आणि वाजवी दर.';
     final hours = business['opening_hours'] ?? 'सकाळी ९:०० ते रात्री ८:००';
 
-    return Scaffold(
-      backgroundColor: AppColors.surface,
-      appBar: AppBar(
+    return AppBackScope(
+      fallbackRoute: '/explore',
+      child: Scaffold(
+        backgroundColor: AppColors.surface,
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => BackButtonHandler.safePop(context, fallbackRoute: '/explore'),
+          ),
         title: Text(
           nameMr,
           style: GoogleFonts.mukta(fontWeight: FontWeight.bold),
@@ -514,6 +522,7 @@ class BusinessDetailScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 }
