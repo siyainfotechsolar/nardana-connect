@@ -110,3 +110,4 @@ CREATE POLICY "Enable read access for all app_settings" ON public.app_settings F
 CREATE POLICY "Enable insert access for all app_settings" ON public.app_settings FOR INSERT WITH CHECK (true);
 CREATE POLICY "Enable update access for all app_settings" ON public.app_settings FOR UPDATE USING (true) WITH CHECK (true);
 CREATE POLICY "Enable delete access for all app_settings" ON public.app_settings FOR DELETE USING (true);
+

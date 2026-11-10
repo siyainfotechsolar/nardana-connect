@@ -341,6 +341,8 @@ class HomeScreen extends ConsumerWidget {
 
             const SizedBox(height: 20),
 
+
+
             // Categories Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -429,6 +431,105 @@ class HomeScreen extends ConsumerWidget {
                     title: 'हॉटेल्स',
                     color: Colors.brown,
                     onTap: () => context.push('/explore'),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // Featured Shops Section
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.storefront_rounded, size: 18, color: AppColors.primaryBlue),
+                      const SizedBox(width: 6),
+                      Text(
+                        'स्थानिक दुकाने व सेवा',
+                        style: GoogleFonts.mukta(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  InkWell(
+                    onTap: () => context.push('/explore'),
+                    child: Text(
+                      l10n.translate('view_all'),
+                      style: GoogleFonts.mukta(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryBlue,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            SizedBox(
+              height: 148,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                children: [
+                  _buildFeaturedShopCard(
+                    context,
+                    name: 'जय भवानी इलेक्ट्रिकल',
+                    category: 'इलेक्ट्रिशियन',
+                    village: 'नरडाणा',
+                    owner: 'सचिन पाटील',
+                    phone: '9823012345',
+                    address: 'स्टेशन रोड, नरडाणा',
+                    desc: 'घरगुती व शेती पंपाचे सर्व प्रकारचे वायरिंग व दुरुस्ती काम योग्य दरात.',
+                    icon: Icons.electric_bolt_rounded,
+                    color: Colors.orange.shade700,
+                  ),
+                  const SizedBox(width: 12),
+                  _buildFeaturedShopCard(
+                    context,
+                    name: 'महालक्ष्मी किराणा',
+                    category: 'किराणा दुकान',
+                    village: 'नरडाणा',
+                    owner: 'प्रमोद महाजन',
+                    phone: '9422054321',
+                    address: 'मेन बाजारपेठ, नरडाणा',
+                    desc: 'सर्व प्रकारचा दर्जेदार किराणा, कडधान्ये व घरगुती वस्तू.',
+                    icon: Icons.shopping_basket_rounded,
+                    color: Colors.green.shade700,
+                  ),
+                  const SizedBox(width: 12),
+                  _buildFeaturedShopCard(
+                    context,
+                    name: 'धनवंतरी मेडिकल',
+                    category: 'औषध स्टोअर्स',
+                    village: 'नरडाणा',
+                    owner: 'डॉ. भूषण पाटील',
+                    phone: '9890123456',
+                    address: 'ग्रामीण रुग्णालयासमोर, नरडाणा',
+                    desc: 'सर्व ॲलोपॅथिक, व्हेटरनरी व लहान मुलांची औषधे वाजवी दरात.',
+                    icon: Icons.local_pharmacy_rounded,
+                    color: Colors.red.shade700,
+                  ),
+                  const SizedBox(width: 12),
+                  _buildFeaturedShopCard(
+                    context,
+                    name: 'किसान ट्रॅक्टर सर्व्हिस',
+                    category: 'शेती अवजारे',
+                    village: 'नरडाणा',
+                    owner: 'दिनेश चौधरी',
+                    phone: '9765432100',
+                    address: 'वाघाळी फाटा, नरडाणा',
+                    desc: 'नांगरणी, रोटाव्हेटर आणि पेरणीसाठी महिंद्रा ट्रॅक्टर वेळेवर उपलब्ध.',
+                    icon: Icons.agriculture_rounded,
+                    color: Colors.teal.shade700,
                   ),
                 ],
               ),
@@ -636,6 +737,129 @@ class HomeScreen extends ConsumerWidget {
                   color: AppColors.textPrimary,
                 ),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFeaturedShopCard(
+    BuildContext context, {
+    required String name,
+    required String category,
+    required String village,
+    required String owner,
+    required String phone,
+    required String address,
+    required String desc,
+    required IconData icon,
+    required Color color,
+  }) {
+    return InkWell(
+      onTap: () {
+        context.push('/business-detail', extra: {
+          'name_mr': name,
+          'category': category,
+          'village': village,
+          'owner': owner,
+          'phone': phone,
+          'address': address,
+          'desc': desc,
+          'opening_hours': 'सकाळी ९:०० ते रात्री ८:००',
+        });
+      },
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        width: 175,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.border),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CircleAvatar(
+                  radius: 16,
+                  backgroundColor: color.withValues(alpha: 0.12),
+                  child: Icon(icon, size: 18, color: color),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryBlue.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    village,
+                    style: GoogleFonts.mukta(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.primaryBlue,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const Spacer(),
+            Text(
+              name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.mukta(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+                height: 1.2,
+              ),
+            ),
+            Text(
+              category,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.mukta(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: AppColors.secondaryGreen,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Icon(Icons.person_outline_rounded, size: 12, color: AppColors.textMuted),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    owner,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.mukta(
+                      fontSize: 11,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+                Text(
+                  'पहा →',
+                  style: GoogleFonts.mukta(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primaryBlue,
+                  ),
+                ),
+              ],
             ),
           ],
         ),

@@ -4,6 +4,7 @@ import 'package:nardana_connect/features/language/presentation/screens/language_
 import 'package:nardana_connect/features/welcome/presentation/screens/welcome_screen.dart';
 import 'package:nardana_connect/features/shell/presentation/screens/main_shell_screen.dart';
 import 'package:nardana_connect/features/explore/presentation/screens/explore_screen.dart';
+import 'package:nardana_connect/features/explore/presentation/screens/business_detail_screen.dart';
 import 'package:nardana_connect/features/explore/presentation/screens/search_screen.dart';
 import 'package:nardana_connect/features/emergency/presentation/screens/emergency_screen.dart';
 import 'package:nardana_connect/features/notices/presentation/screens/notices_screen.dart';
@@ -37,6 +38,13 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/explore',
       builder: (context, state) => const ExploreScreen(),
+    ),
+    GoRoute(
+      path: '/business-detail',
+      builder: (context, state) {
+        final business = state.extra as Map<String, dynamic>? ?? {};
+        return BusinessDetailScreen(business: business);
+      },
     ),
     GoRoute(
       path: '/emergency',
