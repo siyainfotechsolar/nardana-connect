@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { 
-  Users, 
   MapPin, 
   Store, 
   Briefcase, 
   ShoppingBag, 
   Bell, 
+  Megaphone,
   Clock, 
   CheckCircle2, 
   ArrowUpRight,
@@ -25,6 +25,7 @@ interface Stats {
   marketplaceCount: number;
   pendingMarketplaceCount: number;
   noticesCount: number;
+  adsCount: number;
 }
 
 export const Dashboard: React.FC = () => {
@@ -38,6 +39,7 @@ export const Dashboard: React.FC = () => {
     marketplaceCount: 0,
     pendingMarketplaceCount: 0,
     noticesCount: 0,
+    adsCount: 0,
   });
   const [loading, setLoading] = useState(true);
 
@@ -53,6 +55,7 @@ export const Dashboard: React.FC = () => {
         marketRes,
         pendingMarketRes,
         noticesRes,
+        adsRes,
       ] = await Promise.all([
         supabase.from('villages').select('id', { count: 'exact', head: true }),
         supabase.from('businesses').select('id', { count: 'exact', head: true }).eq('status', 'approved'),
@@ -62,10 +65,11 @@ export const Dashboard: React.FC = () => {
         supabase.from('marketplace_items').select('id', { count: 'exact', head: true }).eq('status', 'approved'),
         supabase.from('marketplace_items').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
         supabase.from('notices').select('id', { count: 'exact', head: true }),
+        supabase.from('advertisements').select('id', { count: 'exact', head: true }),
       ]);
 
       setStats({
-        villagesCount: villagesRes.count ?? 7,
+        villagesCount: villagesRes.count ?? 1,
         businessesCount: businessesRes.count ?? 22,
         pendingBusinessesCount: pendingBusinessesRes.count ?? 0,
         jobsCount: jobsRes.count ?? 4,
@@ -73,6 +77,7 @@ export const Dashboard: React.FC = () => {
         marketplaceCount: marketRes.count ?? 3,
         pendingMarketResCount: pendingMarketRes.count ?? 0,
         noticesCount: noticesRes.count ?? 7,
+        adsCount: adsRes.count ?? 4,
       } as any);
     } catch (e) {
       console.error('Error fetching dashboard stats:', e);
@@ -87,13 +92,13 @@ export const Dashboard: React.FC = () => {
 
   const statCards = [
     { 
-      title: 'समाविष्ट गावे (Villages)', 
-      value: stats.villagesCount, 
+      title: 'अधिकृत गाव क्षेत्र', 
+      value: 'नरडाणा', 
       icon: MapPin, 
       color: 'text-blue-600', 
       bg: 'bg-blue-50',
       to: '/villages',
-      subtitle: 'नरडाणा आणि ६ उपगावे'
+      subtitle: 'पिन: ४२५४०४, ता. शिंदखेडा'
     },
     { 
       title: 'मान्य व्यवसाय व दुकाने', 
@@ -140,6 +145,15 @@ export const Dashboard: React.FC = () => {
       to: '/notices',
       subtitle: 'ग्रामपंचायत अधिकृत घोषणा'
     },
+    { 
+      title: 'जाहिराती (Advertisements)', 
+      value: stats.adsCount, 
+      icon: Megaphone, 
+      color: 'text-rose-600', 
+      bg: 'bg-rose-50',
+      to: '/advertisements',
+      subtitle: 'बॅनर व प्रायोजित जाहिराती'
+    },
   ];
 
   return (
@@ -157,7 +171,7 @@ export const Dashboard: React.FC = () => {
           </div>
           <h2 className="text-2xl font-black tracking-tight">नरडाणा कनेक्ट व्यवस्थापन पॅनेल</h2>
           <p className="text-slate-300 text-xs max-w-xl leading-relaxed">
-            नरडाणा, बेटावद, वाघाळी, होळ, चिमठाणे, वरडी आणि शिंदखेडा परिसरासाठी स्वतंत्र, १००% मोफत डिजिटल सामाजिक व्यासपीठ.
+            केवळ नरडाणा (Nardana) गावासाठी स्वतंत्र, १००% मोफत डिजिटल सामाजिक व्यासपीठ. (पिन: ४२५४०४, ता. शिंदखेडा, जि. धुळे)
           </p>
         </div>
 
@@ -210,7 +224,13 @@ export const Dashboard: React.FC = () => {
           onClick={() => navigate('/villages')}
           className="px-3 py-1.5 rounded-lg bg-amber-50 text-amber-800 hover:bg-amber-100 text-xs font-semibold transition flex items-center gap-1.5 border border-amber-200"
         >
-          <MapPin className="w-3.5 h-3.5" /> + गाव व्यवस्थापन
+          <MapPin className="w-3.5 h-3.5" /> गाव माहिती
+        </button>
+        <button
+          onClick={() => navigate('/advertisements')}
+          className="px-3 py-1.5 rounded-lg bg-rose-50 text-rose-800 hover:bg-rose-100 text-xs font-semibold transition flex items-center gap-1.5 border border-rose-200"
+        >
+          <Megaphone className="w-3.5 h-3.5" /> + जाहिरात जोडा
         </button>
       </div>
 
@@ -269,30 +289,32 @@ export const Dashboard: React.FC = () => {
 
         <div className="bg-white rounded-xl border border-slate-200 p-5 shadow-sm space-y-3">
           <h3 className="font-bold text-sm text-slate-800 flex items-center gap-2">
-            <Users className="w-4 h-4 text-brand-blue" /> समाविष्ट गावे (Coverage Villages)
+            <MapPin className="w-4 h-4 text-brand-blue" /> नरडाणा गाव प्रोफाइल (Nardana Village Profile)
           </h3>
           <p className="text-xs text-slate-500">
-            शिंदखेडा तालुक्यातील नरडाणा केंद्रस्थानी ठेवून लगतच्या ६ गावांचा संपूर्ण डेटाबेस:
+            नरडाणा कनेक्ट हे केवळ नरडाणा गावासाठीचे अधिकृत डिजिटल व्यासपीठ आहे:
           </p>
-          <div className="flex flex-wrap gap-2 text-xs">
-            {[
-              { name: 'नरडाणा (Nardana)', code: '425404' },
-              { name: 'बेटावद (Betawad)', code: '425403' },
-              { name: 'वाघाळी (Waghadi)', code: '425404' },
-              { name: 'होळ (Hol)', code: '425404' },
-              { name: 'चिमठाणे (Chimthane)', code: '425406' },
-              { name: 'वरडी (Vardi)', code: '425404' },
-              { name: 'शिंदखेडा (Shindkheda)', code: '425406' },
-            ].map((village, i) => (
-              <span
-                key={i}
-                className="px-2.5 py-1.5 rounded-lg bg-slate-50 text-slate-700 font-medium border border-slate-200 flex items-center gap-1.5"
-              >
-                <MapPin className="w-3 h-3 text-brand-green" />
-                <span>{village.name}</span>
-                <span className="text-[10px] text-slate-400 font-mono">({village.code})</span>
-              </span>
-            ))}
+          <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+              <span className="text-[10px] text-slate-400 font-semibold block">अधिकृत गाव</span>
+              <span className="font-bold text-slate-800">नरडाणा (Nardana)</span>
+            </div>
+            <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+              <span className="text-[10px] text-slate-400 font-semibold block">पिनकोड (PIN)</span>
+              <span className="font-bold text-brand-blue font-mono">४२५४०४ (425404)</span>
+            </div>
+            <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+              <span className="text-[10px] text-slate-400 font-semibold block">तालुका</span>
+              <span className="font-bold text-slate-800">शिंदखेडा (Shindkheda)</span>
+            </div>
+            <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+              <span className="text-[10px] text-slate-400 font-semibold block">जिल्हा</span>
+              <span className="font-bold text-slate-800">धुळे (Dhule)</span>
+            </div>
+          </div>
+          <div className="p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-xs text-emerald-800 font-medium flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+            <span>भौगोलिक व्याप्ती: केवळ नरडाणा गाव (Exclusive Single-Village Scope)</span>
           </div>
         </div>
       </div>

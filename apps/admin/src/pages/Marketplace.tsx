@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { MarketplaceItem, Village } from '../types/database';
+import { MarketplaceItem } from '../types/database';
 import { 
   ShoppingBag, 
   CheckCircle, 
@@ -34,13 +34,12 @@ const defaultFormData: MarketplaceFormData = {
   seller_name: '',
   phone: '',
   listing_type: 'SELL',
-  village_id: '',
+  village_id: 'a0000000-0000-0000-0000-000000000001',
   status: 'approved',
 };
 
 export const Marketplace: React.FC = () => {
   const [items, setItems] = useState<MarketplaceItem[]>([]);
-  const [villages, setVillages] = useState<Village[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'sold'>('all');
@@ -55,27 +54,14 @@ export const Marketplace: React.FC = () => {
   async function loadData() {
     try {
       setLoading(true);
-      const [itemsRes, vilRes] = await Promise.all([
-        supabase
-          .from('marketplace_items')
-          .select('*')
-          .order('created_at', { ascending: false }),
-        supabase
-          .from('villages')
-          .select('*')
-          .eq('is_active', true)
-          .order('name_mr'),
-      ]);
+      const itemsRes = await supabase
+        .from('marketplace_items')
+        .select('*')
+        .order('created_at', { ascending: false });
 
       if (itemsRes.error) throw itemsRes.error;
-      if (vilRes.error) throw vilRes.error;
 
       setItems(itemsRes.data || []);
-      setVillages(vilRes.data || []);
-
-      if (vilRes.data && vilRes.data.length > 0 && !formData.village_id) {
-        defaultFormData.village_id = vilRes.data[0].id;
-      }
     } catch (err: any) {
       console.error('Error fetching marketplace items:', err);
       showToast('बाजारपेठ लोड करताना त्रुटी: ' + (err.message || ''), 'error');
@@ -91,7 +77,7 @@ export const Marketplace: React.FC = () => {
   function handleOpenAdd() {
     setFormData({
       ...defaultFormData,
-      village_id: villages[0]?.id || '',
+      village_id: 'a0000000-0000-0000-0000-000000000001',
     });
     setIsModalOpen(true);
   }
@@ -115,7 +101,7 @@ export const Marketplace: React.FC = () => {
           seller_name: formData.seller_name.trim(),
           phone: formData.phone.trim(),
           listing_type: formData.listing_type,
-          village_id: formData.village_id || villages[0]?.id,
+          village_id: 'a0000000-0000-0000-0000-000000000001',
           status: formData.status,
           is_sold: false,
           images: [],

@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:nardana_connect/core/constants/app_colors.dart';
 import 'package:nardana_connect/core/localization/app_localizations.dart';
 import 'package:nardana_connect/core/services/supabase_service.dart';
+import 'package:nardana_connect/features/advertisements/presentation/widgets/sponsored_ad_card.dart';
+import 'package:nardana_connect/features/advertisements/providers/advertisement_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class ExploreScreen extends ConsumerStatefulWidget {
@@ -57,7 +59,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
       'phone': '9765432100',
       'whatsapp': '9765432100',
       'village': 'नरडाणा',
-      'address': 'वाघाळी फाटा, नरडाणा',
+      'address': 'हायवे चौक, नरडाणा',
       'desc': 'नांगरणी, रोटाव्हेटर आणि पेरणीसाठी महिंद्रा ट्रॅक्टर वेळेवर उपलब्ध.',
       'opening_hours': '२४ तास सेवा',
       'group': 'agriculture',
@@ -98,8 +100,8 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
       'owner': 'अमोल सुतार',
       'phone': '9822334455',
       'whatsapp': '9822334455',
-      'village': 'वाघाळी',
-      'address': 'वाघाळी गावठाण, ता. शिंदखेडा',
+      'village': 'नरडाणा',
+      'address': 'कुंभार गल्ली, नरडाणा',
       'desc': 'सर्व प्रकारचे लाकडी दरवाजे, खिडक्या व कपाट बनवणे व दुरुस्तीचे काम.',
       'opening_hours': 'सकाळी ८:३० ते संध्याकाळी ६:३०',
       'group': 'home_services',
@@ -112,8 +114,8 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
       'owner': 'कैलास माळी',
       'phone': '9421889900',
       'whatsapp': '9421889900',
-      'village': 'होळ',
-      'address': 'होळ फाटा, नरडाणा',
+      'village': 'नरडाणा',
+      'address': 'स्टेशन परिसर, नरडाणा',
       'desc': 'घरगुती व शेतातील पाईपलाईन लीकेज दुरुस्ती व नवीन नळ जोडणी.',
       'opening_hours': 'सकाळी ८:०० ते संध्याकाळी ८:००',
       'group': 'home_services',
@@ -132,7 +134,7 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
           .from('businesses')
           .select('*, villages(name_mr), categories(name_mr, group_type)')
           .eq('status', 'approved')
-          .order('created_at', {ascending: false});
+          .order('created_at', ascending: false);
 
       if (res.isNotEmpty) {
         final List<Map<String, dynamic>> mapped = (res as List).map((row) {
@@ -241,24 +243,44 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : filtered.isEmpty
-              ? Center(
-                  child: Text(
-                    'या प्रवर्गात सध्या व्यवसाय उपलब्ध नाहीत.',
-                    style: GoogleFonts.mukta(color: AppColors.textSecondary, fontSize: 14),
-                  ),
-                )
-              : ListView.separated(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: filtered.length,
-                  separatorBuilder: (context, index) => const SizedBox(height: 12),
-                  itemBuilder: (context, index) {
+          : Column(
+              children: [
+                // Category-specific Advertisement Banner
+                Consumer(
+                  builder: (context, ref, child) {
+                    final catAdsAsync = ref.watch(categoryAdsProvider(null));
+                    return catAdsAsync.when(
+                      data: (ads) {
+                        if (ads.isEmpty) return const SizedBox.shrink();
+                        return Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                          child: SponsoredAdCard(ad: ads.first),
+                        );
+                      },
+                      loading: () => const SizedBox.shrink(),
+                      error: (e, s) => const SizedBox.shrink(),
+                    );
+                  },
+                ),
+                Expanded(
+                  child: filtered.isEmpty
+                      ? Center(
+                          child: Text(
+                            'या प्रवर्गात सध्या व्यवसाय उपलब्ध नाहीत.',
+                            style: GoogleFonts.mukta(color: AppColors.textSecondary, fontSize: 14),
+                          ),
+                        )
+                      : ListView.separated(
+                          padding: const EdgeInsets.all(16),
+                          itemCount: filtered.length,
+                          separatorBuilder: (context, index) => const SizedBox(height: 12),
+                          itemBuilder: (context, index) {
                     final s = filtered[index];
                     return Card(
                       elevation: 1,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
-                        side: Border.all(color: AppColors.border),
+                        side: const BorderSide(color: AppColors.border),
                       ),
                       clipBehavior: Clip.antiAlias,
                       child: InkWell(
@@ -415,6 +437,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
                     );
                   },
                 ),
+              ),
+            ],
+          ),
     );
   }
 

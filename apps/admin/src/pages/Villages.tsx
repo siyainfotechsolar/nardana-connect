@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { Village } from '../types/database';
-import { MapPin, Plus, Check, X, Edit2, Trash2, Search } from 'lucide-react';
+import { MapPin, Check, X, Edit2 } from 'lucide-react';
 import { useToast } from '../components/Toast';
 
 interface VillageFormData {
@@ -25,7 +25,6 @@ const defaultFormData: VillageFormData = {
 export const Villages: React.FC = () => {
   const [villages, setVillages] = useState<Village[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingVillage, setEditingVillage] = useState<Village | null>(null);
   const [formData, setFormData] = useState<VillageFormData>(defaultFormData);
@@ -53,12 +52,6 @@ export const Villages: React.FC = () => {
   useEffect(() => {
     fetchVillages();
   }, []);
-
-  function handleOpenAdd() {
-    setEditingVillage(null);
-    setFormData(defaultFormData);
-    setIsModalOpen(true);
-  }
 
   function handleOpenEdit(village: Village) {
     setEditingVillage(village);
@@ -97,20 +90,6 @@ export const Villages: React.FC = () => {
 
         if (error) throw error;
         showToast('गावाची माहिती यशस्वीपणे अपडेट केली!', 'success');
-      } else {
-        const { error } = await supabase
-          .from('villages')
-          .insert({
-            name_mr: formData.name_mr.trim(),
-            name_en: formData.name_en.trim(),
-            taluka: formData.taluka.trim(),
-            district: formData.district.trim(),
-            pincode: formData.pincode.trim(),
-            is_active: formData.is_active,
-          });
-
-        if (error) throw error;
-        showToast('नवीन गाव यशस्वीपणे जोडले!', 'success');
       }
 
       setIsModalOpen(false);
@@ -144,65 +123,33 @@ export const Villages: React.FC = () => {
     }
   }
 
-  async function handleDelete(village: Village) {
-    if (!window.confirm(`तुम्हाला नक्की '${village.name_mr}' हे गाव हटवायचे आहे का?`)) {
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('villages')
-        .delete()
-        .eq('id', village.id);
-
-      if (error) throw error;
-      setVillages(prev => prev.filter(v => v.id !== village.id));
-      showToast(`${village.name_mr} गाव यशस्वीपणे हटवले.`, 'success');
-    } catch (err: any) {
-      showToast('गाव हटवताना त्रुटी (स्थानिक व्यवसाय लिंक असू शकतात): ' + err.message, 'error');
-    }
-  }
-
-  const filteredVillages = villages.filter(v =>
-    v.name_mr.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    v.name_en.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    v.taluka.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredVillages = villages;
 
   return (
     <div className="space-y-5">
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h2 className="text-xl font-bold text-slate-900">गाव व्यवस्थापन (Village Management)</h2>
+          <h2 className="text-xl font-bold text-slate-900">गाव माहिती (Village Profile)</h2>
           <p className="text-xs text-slate-500">
-            नरडाणा आणि परिसरातील समाविष्ट गावांची यादी व नियंत्रण ({villages.length} गावे)
+            नरडाणा गाव - अधिकृत भौगोलिक माहिती व प्रोफाइल (Exclusively Nardana Village)
           </p>
         </div>
-        <button
-          onClick={handleOpenAdd}
-          className="flex items-center justify-center space-x-1.5 px-4 py-2.5 bg-brand-blue text-white rounded-lg text-xs font-semibold hover:bg-brand-dark transition shadow-sm active:scale-95"
-        >
-          <Plus className="w-4 h-4" />
-          <span>नवीन गाव जोडा</span>
-        </button>
+        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-800 text-xs font-semibold border border-emerald-200">
+          <Check className="w-3.5 h-3.5 text-emerald-600" />
+          <span>अधिकृत कार्यक्षेत्र: नरडाणा (एकमेव गाव)</span>
+        </div>
       </div>
 
-      {/* Search Bar */}
-      <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-sm flex items-center gap-2">
-        <Search className="w-4 h-4 text-slate-400" />
-        <input
-          type="text"
-          placeholder="गावाच्या नावाने शोधा (उदा. नरडाणा, Waghadi)..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full text-xs text-slate-800 placeholder-slate-400 focus:outline-none"
-        />
-        {searchTerm && (
-          <button onClick={() => setSearchTerm('')} className="text-slate-400 hover:text-slate-600 text-xs">
-            रद्द करा
-          </button>
-        )}
+      {/* Scope Notice Card */}
+      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-xs text-slate-700 flex items-start gap-3">
+        <MapPin className="w-5 h-5 text-brand-blue flex-shrink-0 mt-0.5" />
+        <div className="space-y-1">
+          <p className="font-bold text-brand-blue">नरडाणा कनेक्ट धोरण (Nardana Only Policy):</p>
+          <p className="text-slate-600 leading-relaxed">
+            हे ॲप्लिकेशन आणि व्यवस्थापन पॅनेल केवळ <strong>नरडाणा गावासाठी</strong> कार्यरत आहे. सर्व दुकाने, रोजगार, सूचना आणि आणीबाणी सेवा नरडाणा गावाशीच संबंधित आहेत. इतर कोणतेही गाव जोडण्याची आवश्यकता नाही.
+          </p>
+        </div>
       </div>
 
       {/* Village Table */}
@@ -259,17 +206,11 @@ export const Villages: React.FC = () => {
                     <td className="px-5 py-3.5 text-right space-x-1">
                       <button
                         onClick={() => handleOpenEdit(v)}
-                        className="p-1.5 text-slate-600 hover:text-brand-blue hover:bg-blue-50 rounded transition"
+                        className="px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:text-brand-blue hover:bg-blue-50 rounded-lg border border-slate-200 transition inline-flex items-center gap-1"
                         title="संपादित करा"
                       >
                         <Edit2 className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(v)}
-                        className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition"
-                        title="हटवा"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>तपशील बदला</span>
                       </button>
                     </td>
                   </tr>
@@ -287,7 +228,7 @@ export const Villages: React.FC = () => {
             <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
               <h3 className="font-bold text-sm text-slate-800 flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-brand-green" />
-                {editingVillage ? 'गाव माहिती संपादित करा' : 'नवीन गाव जोडा'}
+                नरडाणा गाव माहिती संपादित करा
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -305,10 +246,9 @@ export const Villages: React.FC = () => {
                 <input
                   type="text"
                   required
-                  placeholder="उदा. नरडाणा, बेटावद, वाघाळी"
+                  readOnly
                   value={formData.name_mr}
-                  onChange={(e) => setFormData({ ...formData, name_mr: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-brand-blue text-xs"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-slate-50 font-bold text-slate-800 text-xs"
                 />
               </div>
 
@@ -319,10 +259,9 @@ export const Villages: React.FC = () => {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Nardana, Betawad"
+                  readOnly
                   value={formData.name_en}
-                  onChange={(e) => setFormData({ ...formData, name_en: e.target.value })}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-brand-blue text-xs"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-slate-50 font-bold text-slate-800 text-xs"
                 />
               </div>
 

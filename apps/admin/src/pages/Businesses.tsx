@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { Business, Village, Category } from '../types/database';
+import { Business, Category } from '../types/database';
 import { 
   Store, 
   Phone, 
@@ -39,7 +39,7 @@ const defaultFormData: BusinessFormData = {
   owner_name: '',
   phone: '',
   whatsapp: '',
-  village_id: '',
+  village_id: 'a0000000-0000-0000-0000-000000000001',
   category_id: '',
   address: '',
   description: '',
@@ -49,14 +49,12 @@ const defaultFormData: BusinessFormData = {
 
 export const Businesses: React.FC = () => {
   const [businesses, setBusinesses] = useState<Business[]>([]);
-  const [villages, setVillages] = useState<Village[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Filters
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
-  const [villageFilter, setVillageFilter] = useState<string>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
 
   // Modals
@@ -71,16 +69,11 @@ export const Businesses: React.FC = () => {
   async function loadData() {
     try {
       setLoading(true);
-      const [bizRes, vilRes, catRes] = await Promise.all([
+      const [bizRes, catRes] = await Promise.all([
         supabase
           .from('businesses')
           .select('*')
           .order('created_at', { ascending: false }),
-        supabase
-          .from('villages')
-          .select('*')
-          .eq('is_active', true)
-          .order('name_mr'),
         supabase
           .from('categories')
           .select('*')
@@ -89,16 +82,11 @@ export const Businesses: React.FC = () => {
       ]);
 
       if (bizRes.error) throw bizRes.error;
-      if (vilRes.error) throw vilRes.error;
       if (catRes.error) throw catRes.error;
 
       setBusinesses(bizRes.data || []);
-      setVillages(vilRes.data || []);
       setCategories(catRes.data || []);
 
-      if (vilRes.data && vilRes.data.length > 0 && !formData.village_id) {
-        defaultFormData.village_id = vilRes.data[0].id;
-      }
       if (catRes.data && catRes.data.length > 0 && !formData.category_id) {
         defaultFormData.category_id = catRes.data[0].id;
       }
@@ -118,7 +106,7 @@ export const Businesses: React.FC = () => {
     setEditingBusiness(null);
     setFormData({
       ...defaultFormData,
-      village_id: villages[0]?.id || '',
+      village_id: 'a0000000-0000-0000-0000-000000000001',
       category_id: categories[0]?.id || '',
     });
     setIsModalOpen(true);
@@ -245,8 +233,8 @@ export const Businesses: React.FC = () => {
     }
   }
 
-  const getVillageName = (vid: string) => {
-    return villages.find(v => v.id === vid)?.name_mr || 'गाव';
+  const getVillageName = (_vid: string) => {
+    return 'नरडाणा';
   };
 
   const getCategoryName = (cid: string) => {
@@ -260,10 +248,9 @@ export const Businesses: React.FC = () => {
       b.owner_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       b.phone.includes(searchTerm);
     const matchesStatus = statusFilter === 'all' || b.status === statusFilter;
-    const matchesVillage = villageFilter === 'all' || b.village_id === villageFilter;
     const matchesCategory = categoryFilter === 'all' || b.category_id === categoryFilter;
 
-    return matchesSearch && matchesStatus && matchesVillage && matchesCategory;
+    return matchesSearch && matchesStatus && matchesCategory;
   });
 
   const pendingCount = businesses.filter(b => b.status === 'pending').length;
@@ -351,20 +338,9 @@ export const Businesses: React.FC = () => {
             />
           </div>
 
-          <div className="flex items-center gap-2">
-            <MapPin className="w-4 h-4 text-slate-400 flex-shrink-0" />
-            <select
-              value={villageFilter}
-              onChange={(e) => setVillageFilter(e.target.value)}
-              className="w-full text-xs border border-slate-200 rounded-lg px-2.5 py-2 bg-white text-slate-700 focus:outline-none"
-            >
-              <option value="all">सर्व गावे (All Villages)</option>
-              {villages.map((v) => (
-                <option key={v.id} value={v.id}>
-                  {v.name_mr} ({v.name_en})
-                </option>
-              ))}
-            </select>
+          <div className="flex items-center gap-1.5 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-700">
+            <MapPin className="w-3.5 h-3.5 text-brand-green flex-shrink-0" />
+            <span>गाव: नरडाणा (४२५४०४)</span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -562,19 +538,12 @@ export const Businesses: React.FC = () => {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">
-                    गाव निवडा <span className="text-rose-500">*</span>
+                    गाव (Village)
                   </label>
-                  <select
-                    value={formData.village_id}
-                    onChange={(e) => setFormData({ ...formData, village_id: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-brand-blue text-xs bg-white"
-                  >
-                    {villages.map((v) => (
-                      <option key={v.id} value={v.id}>
-                        {v.name_mr} ({v.name_en})
-                      </option>
-                    ))}
-                  </select>
+                  <div className="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-brand-green" />
+                    <span>नरडाणा (Nardana - 425404)</span>
+                  </div>
                 </div>
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">

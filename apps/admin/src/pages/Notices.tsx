@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { Notice, Village } from '../types/database';
+import { Notice } from '../types/database';
 import { 
   Bell, 
   Plus, 
@@ -30,7 +30,7 @@ const defaultFormData: NoticeFormData = {
   title_en: '',
   description_mr: '',
   description_en: '',
-  village_id: '',
+  village_id: 'a0000000-0000-0000-0000-000000000001',
   priority: 'normal',
   is_gram_panchayat: true,
   status: 'published',
@@ -38,7 +38,6 @@ const defaultFormData: NoticeFormData = {
 
 export const Notices: React.FC = () => {
   const [notices, setNotices] = useState<Notice[]>([]);
-  const [villages, setVillages] = useState<Village[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
@@ -53,27 +52,14 @@ export const Notices: React.FC = () => {
   async function loadData() {
     try {
       setLoading(true);
-      const [noticesRes, vilRes] = await Promise.all([
-        supabase
-          .from('notices')
-          .select('*')
-          .order('published_date', { ascending: false }),
-        supabase
-          .from('villages')
-          .select('*')
-          .eq('is_active', true)
-          .order('name_mr'),
-      ]);
+      const noticesRes = await supabase
+        .from('notices')
+        .select('*')
+        .order('published_date', { ascending: false });
 
       if (noticesRes.error) throw noticesRes.error;
-      if (vilRes.error) throw vilRes.error;
 
       setNotices(noticesRes.data || []);
-      setVillages(vilRes.data || []);
-
-      if (vilRes.data && vilRes.data.length > 0 && !formData.village_id) {
-        defaultFormData.village_id = vilRes.data[0].id;
-      }
     } catch (err: any) {
       console.error('Error fetching notices:', err);
       showToast('सूचना लोड करताना त्रुटी: ' + (err.message || ''), 'error');
@@ -89,7 +75,7 @@ export const Notices: React.FC = () => {
   function handleOpenAdd() {
     setFormData({
       ...defaultFormData,
-      village_id: villages[0]?.id || '',
+      village_id: 'a0000000-0000-0000-0000-000000000001',
     });
     setIsModalOpen(true);
   }
@@ -110,7 +96,7 @@ export const Notices: React.FC = () => {
           title_en: formData.title_en.trim() || formData.title_mr.trim(),
           description_mr: formData.description_mr.trim(),
           description_en: formData.description_en.trim() || formData.description_mr.trim(),
-          village_id: formData.village_id || villages[0]?.id,
+          village_id: 'a0000000-0000-0000-0000-000000000001',
           priority: formData.priority,
           is_gram_panchayat: formData.is_gram_panchayat,
           status: formData.status,
@@ -148,8 +134,8 @@ export const Notices: React.FC = () => {
     }
   }
 
-  const getVillageName = (vid: string) => {
-    return villages.find(v => v.id === vid)?.name_mr || 'सर्व गावे';
+  const getVillageName = (_vid: string) => {
+    return 'नरडाणा';
   };
 
   const filteredNotices = notices.filter((n) => {
@@ -348,18 +334,11 @@ export const Notices: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block font-semibold text-slate-700 mb-1">संबंधित गाव</label>
-                  <select
-                    value={formData.village_id}
-                    onChange={(e) => setFormData({ ...formData, village_id: e.target.value })}
-                    className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:border-brand-blue text-xs bg-white"
-                  >
-                    {villages.map((v) => (
-                      <option key={v.id} value={v.id}>
-                        {v.name_mr} ({v.name_en})
-                      </option>
-                    ))}
-                  </select>
+                  <label className="block font-semibold text-slate-700 mb-1">गाव (Village)</label>
+                  <div className="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5 text-brand-blue" />
+                    <span>नरडाणा (Nardana - 425404)</span>
+                  </div>
                 </div>
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">प्राधान्य (Priority)</label>

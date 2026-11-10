@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { Job, Village } from '../types/database';
+import { Job } from '../types/database';
 import { 
   Briefcase, 
   CheckCircle, 
@@ -35,7 +35,7 @@ const defaultFormData: JobFormData = {
   employer_name: '',
   contact_number: '',
   job_location: 'नरडाणा (Nardana)',
-  village_id: '',
+  village_id: 'a0000000-0000-0000-0000-000000000001',
   salary_range: 'चर्चेनुसार (Negotiable)',
   qualification: '१० वी / १२ वी किंवा अनुभव',
   experience: 'अनुभवी / नवीन उमेदवार',
@@ -46,7 +46,6 @@ const defaultFormData: JobFormData = {
 
 export const Jobs: React.FC = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
-  const [villages, setVillages] = useState<Village[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
@@ -61,27 +60,14 @@ export const Jobs: React.FC = () => {
   async function loadData() {
     try {
       setLoading(true);
-      const [jobsRes, vilRes] = await Promise.all([
-        supabase
-          .from('jobs')
-          .select('*')
-          .order('created_at', { ascending: false }),
-        supabase
-          .from('villages')
-          .select('*')
-          .eq('is_active', true)
-          .order('name_mr'),
-      ]);
+      const jobsRes = await supabase
+        .from('jobs')
+        .select('*')
+        .order('created_at', { ascending: false });
 
       if (jobsRes.error) throw jobsRes.error;
-      if (vilRes.error) throw vilRes.error;
 
       setJobs(jobsRes.data || []);
-      setVillages(vilRes.data || []);
-
-      if (vilRes.data && vilRes.data.length > 0 && !formData.village_id) {
-        defaultFormData.village_id = vilRes.data[0].id;
-      }
     } catch (err: any) {
       console.error('Error fetching jobs:', err);
       showToast('नोकऱ्या लोड करताना त्रुटी: ' + (err.message || ''), 'error');
@@ -97,7 +83,7 @@ export const Jobs: React.FC = () => {
   function handleOpenAdd() {
     setFormData({
       ...defaultFormData,
-      village_id: villages[0]?.id || '',
+      village_id: 'a0000000-0000-0000-0000-000000000001',
     });
     setIsModalOpen(true);
   }
@@ -119,7 +105,7 @@ export const Jobs: React.FC = () => {
           employer_name: formData.employer_name.trim() || formData.company_name.trim(),
           contact_number: formData.contact_number.trim(),
           job_location: formData.job_location.trim(),
-          village_id: formData.village_id || villages[0]?.id,
+          village_id: 'a0000000-0000-0000-0000-000000000001',
           salary_range: formData.salary_range.trim(),
           qualification: formData.qualification.trim(),
           experience: formData.experience.trim(),

@@ -83,3 +83,40 @@ export interface Notice {
   created_at: string;
 }
 
+export interface Advertisement {
+  id: string;
+  village_id: string;
+  title_mr: string;
+  title_en: string;
+  description_mr?: string;
+  description_en?: string;
+  image_url: string;
+  placement: 'home_carousel' | 'sponsored_card' | 'category_banner' | 'popup';
+  category_id?: string;
+  target_type: 'none' | 'business' | 'phone' | 'whatsapp' | 'url' | 'notice';
+  target_id?: string;
+  target_url?: string;
+  phone?: string;
+  whatsapp?: string;
+  start_date: string;
+  end_date: string;
+  is_active: boolean;
+  priority: number;
+  impressions_count: number;
+  clicks_count: number;
+  advertiser_name?: string;
+  advertiser_contact?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface AdvertisementEvent {
+  id: string;
+  advertisement_id: string;
+  event_type: 'impression' | 'click';
+  user_id?: string;
+  device_info?: string;
+  created_at: string;
+}
+
+

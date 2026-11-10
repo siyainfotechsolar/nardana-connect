@@ -10,7 +10,7 @@ export const Header: React.FC = () => {
           लाइव्ह सिस्टीम (Live)
         </span>
         <span className="hidden sm:inline text-xs text-slate-500 font-medium">
-          कव्हरेज: नरडाणा आणि परिसर (७ गावे)
+          कव्हरेज: केवळ नरडाणा गाव (Exclusively Nardana Village)
         </span>
       </div>
 

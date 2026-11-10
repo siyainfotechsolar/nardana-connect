@@ -87,7 +87,7 @@ class BusinessDetailScreen extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [AppColors.primaryBlue, AppColors.darkSlate],
+                  colors: [AppColors.primaryBlue, AppColors.primaryDark],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
@@ -303,16 +303,16 @@ class BusinessDetailScreen extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: Colors.emerald.shade50,
+                      color: Colors.green.shade50,
                       borderRadius: BorderRadius.circular(6),
-                      border: Border.all(color: Colors.emerald.shade200),
+                      border: Border.all(color: Colors.green.shade200),
                     ),
                     child: Text(
                       'खुले आहे',
                       style: GoogleFonts.mukta(
                         fontSize: 11,
                         fontWeight: FontWeight.bold,
-                        color: Colors.emerald.shade800,
+                        color: Colors.green.shade800,
                       ),
                     ),
                   ),

@@ -11,6 +11,8 @@ import 'package:nardana_connect/features/notices/presentation/screens/notices_sc
 import 'package:nardana_connect/features/jobs/presentation/screens/jobs_screen.dart';
 import 'package:nardana_connect/features/marketplace/presentation/screens/marketplace_screen.dart';
 import 'package:nardana_connect/features/profile/presentation/screens/favorites_screen.dart';
+import 'package:nardana_connect/features/advertisements/models/advertisement_model.dart';
+import 'package:nardana_connect/features/advertisements/presentation/screens/advertisement_detail_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -65,6 +67,13 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/favorites',
       builder: (context, state) => const FavoritesScreen(),
+    ),
+    GoRoute(
+      path: '/advertisement-detail',
+      builder: (context, state) {
+        final ad = state.extra as AdvertisementModel;
+        return AdvertisementDetailScreen(ad: ad);
+      },
     ),
   ],
 );

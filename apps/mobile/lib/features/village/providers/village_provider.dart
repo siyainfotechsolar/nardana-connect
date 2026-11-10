@@ -7,24 +7,27 @@ class VillageItem {
   final String nameMr;
   final String nameEn;
   final String taluka;
+  final String pincode;
 
   const VillageItem({
     required this.id,
     required this.nameMr,
     required this.nameEn,
     required this.taluka,
+    this.pincode = '425404',
   });
 }
 
+const VillageItem kNardanaVillage = VillageItem(
+  id: 'a0000000-0000-0000-0000-000000000001',
+  nameMr: 'नरडाणा',
+  nameEn: 'Nardana',
+  taluka: 'शिंदखेडा (Shindkheda)',
+  pincode: '425404',
+);
+
 const List<VillageItem> kSupportedVillages = [
-  VillageItem(id: 'all', nameMr: 'सर्व गावे', nameEn: 'All Villages', taluka: 'Shindkheda'),
-  VillageItem(id: 'a0000000-0000-0000-0000-000000000001', nameMr: 'नरडाणा', nameEn: 'Nardana', taluka: 'Shindkheda'),
-  VillageItem(id: 'a0000000-0000-0000-0000-000000000002', nameMr: 'वाघाळी', nameEn: 'Waghadi', taluka: 'Shindkheda'),
-  VillageItem(id: 'a0000000-0000-0000-0000-000000000003', nameMr: 'होळ', nameEn: 'Hol', taluka: 'Shindkheda'),
-  VillageItem(id: 'a0000000-0000-0000-0000-000000000004', nameMr: 'बेटावद', nameEn: 'Betawad', taluka: 'Shindkheda'),
-  VillageItem(id: 'a0000000-0000-0000-0000-000000000005', nameMr: 'चिमठाणे', nameEn: 'Chimthane', taluka: 'Shindkheda'),
-  VillageItem(id: 'a0000000-0000-0000-0000-000000000006', nameMr: 'वरडी', nameEn: 'Vardi', taluka: 'Shindkheda'),
-  VillageItem(id: 'a0000000-0000-0000-0000-000000000007', nameMr: 'शिंदखेडा', nameEn: 'Shindkheda', taluka: 'Shindkheda'),
+  kNardanaVillage,
 ];
 
 final selectedVillageProvider = StateNotifierProvider<VillageNotifier, VillageItem>((ref) {
@@ -32,35 +35,13 @@ final selectedVillageProvider = StateNotifierProvider<VillageNotifier, VillageIt
 });
 
 class VillageNotifier extends StateNotifier<VillageItem> {
-  VillageNotifier() : super(kSupportedVillages[1]) { // Default to Nardana
-    _loadSavedVillage();
-  }
-
-  Future<void> _loadSavedVillage() async {
-    final prefs = await SharedPreferences.getInstance();
-    final savedId = prefs.getString('selected_village_id');
-    if (savedId != null) {
-      final found = kSupportedVillages.firstWhere(
-        (v) => v.id == savedId,
-        orElse: () => kSupportedVillages[1],
-      );
-      state = found;
-    }
-  }
+  VillageNotifier() : super(kNardanaVillage);
 
   Future<void> selectVillage(VillageItem village) async {
-    final oldVillage = state;
+    state = kNardanaVillage;
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('selected_village_id', village.id);
-    state = village;
-
-    // Update FCM topic subscriptions
-    if (oldVillage.id != 'all' && oldVillage.id != village.id) {
-      await NotificationService.instance.unsubscribeFromVillage(oldVillage.nameEn);
-    }
-    if (village.id != 'all') {
-      await NotificationService.instance.subscribeToVillage(village.nameEn);
-    }
+    await prefs.setString('selected_village_id', kNardanaVillage.id);
+    await NotificationService.instance.subscribeToVillage('Nardana');
   }
 }
 

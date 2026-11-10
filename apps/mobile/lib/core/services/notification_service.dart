@@ -52,7 +52,7 @@ class NotificationService {
       });
 
       // Always subscribe to general community updates
-      await messaging.subscribeToTopic('all_villages');
+      await messaging.subscribeToTopic('nardana_community');
       await messaging.subscribeToTopic('emergency_alerts');
 
       // Handle foreground notifications

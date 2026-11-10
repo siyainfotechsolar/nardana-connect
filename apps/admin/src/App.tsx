@@ -10,6 +10,7 @@ import { Businesses } from './pages/Businesses';
 import { Jobs } from './pages/Jobs';
 import { Marketplace } from './pages/Marketplace';
 import { Notices } from './pages/Notices';
+import { Advertisements } from './pages/Advertisements';
 import { Settings } from './pages/Settings';
 
 const queryClient = new QueryClient({
@@ -35,6 +36,7 @@ export const App: React.FC = () => {
               <Route path="jobs" element={<Jobs />} />
               <Route path="marketplace" element={<Marketplace />} />
               <Route path="notices" element={<Notices />} />
+              <Route path="advertisements" element={<Advertisements />} />
               <Route path="settings" element={<Settings />} />
             </Route>
           </Routes>

@@ -123,15 +123,14 @@ class ProfileScreen extends ConsumerWidget {
                     leading: const Icon(Icons.location_city_rounded,
                         color: AppColors.primaryBlue),
                     title: Text(
-                      'माझे गाव बदला',
+                      'अधिकृत गाव कार्यक्षेत्र',
                       style: GoogleFonts.mukta(fontWeight: FontWeight.w600),
                     ),
                     subtitle: Text(
-                      currentVillage.nameMr,
-                      style: GoogleFonts.mukta(fontSize: 12),
+                      'नरडाणा (पिन: ४२५४०४, ता. शिंदखेडा, जि. धुळे)',
+                      style: GoogleFonts.mukta(
+                          fontSize: 12, color: AppColors.secondaryGreen, fontWeight: FontWeight.w600),
                     ),
-                    trailing: const Icon(Icons.chevron_right_rounded),
-                    onTap: () => context.push('/search'),
                   ),
                   const Divider(height: 1),
                   ListTile(
@@ -148,7 +147,7 @@ class ProfileScreen extends ConsumerWidget {
                         applicationName: 'नरडाणा कनेक्ट (Nardana Connect)',
                         applicationVersion: '1.0.0 (Community Edition)',
                         applicationLegalese:
-                            'नरडाणा व परिसरातील सर्व गावांसाठी मोफत सामाजिक मंच.\nआपलं गाव, आपली डिजिटल ओळख!\n\nDeveloped by Siya Infotech & Solar Energy',
+                            'केवळ नरडाणा गावासाठीचे मोफत स्वतंत्र सामाजिक व माहिती व्यासपीठ.\nआपलं गाव, आपली डिजिटल ओळख!\n\nDeveloped with ❤️ by Siya Infotech & Solar Energy',
                       );
                     },
                   ),
@@ -183,7 +182,7 @@ class ProfileScreen extends ConsumerWidget {
                     ),
                   ),
                   Text(
-                    'Betawad • Rural Digital Initiative',
+                    'Rural Digital Initiative • Dhule',
                     style: GoogleFonts.mukta(
                       fontSize: 11,
                       color: AppColors.secondaryGreen,

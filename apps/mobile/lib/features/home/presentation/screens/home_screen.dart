@@ -6,6 +6,9 @@ import 'package:nardana_connect/core/constants/app_colors.dart';
 import 'package:nardana_connect/core/localization/app_localizations.dart';
 import 'package:nardana_connect/features/village/providers/village_provider.dart';
 import 'package:nardana_connect/features/village/presentation/screens/village_selector_dialog.dart';
+import 'package:nardana_connect/features/advertisements/presentation/widgets/home_ad_carousel.dart';
+import 'package:nardana_connect/features/advertisements/presentation/widgets/sponsored_ad_card.dart';
+import 'package:nardana_connect/features/advertisements/providers/advertisement_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -111,15 +114,13 @@ class HomeScreen extends ConsumerWidget {
                         color: AppColors.accentYellow, size: 14),
                     const SizedBox(width: 4),
                     Text(
-                      selectedVillage.nameMr,
+                      'नरडाणा (425404)',
                       style: GoogleFonts.mukta(
                         fontSize: 13,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),
                     ),
-                    const Icon(Icons.arrow_drop_down_rounded,
-                        color: Colors.white, size: 18),
                   ],
                 ),
               ),
@@ -190,6 +191,11 @@ class HomeScreen extends ConsumerWidget {
             ),
 
             const SizedBox(height: 12),
+
+            // Advertisement Carousel (Admin-Controlled, Realtime)
+            const HomeAdCarousel(),
+
+            const SizedBox(height: 14),
 
             // Emergency Quick Dial Section
             Padding(
@@ -526,7 +532,7 @@ class HomeScreen extends ConsumerWidget {
                     village: 'नरडाणा',
                     owner: 'दिनेश चौधरी',
                     phone: '9765432100',
-                    address: 'वाघाळी फाटा, नरडाणा',
+                    address: 'हायवे चौक, नरडाणा',
                     desc: 'नांगरणी, रोटाव्हेटर आणि पेरणीसाठी महिंद्रा ट्रॅक्टर वेळेवर उपलब्ध.',
                     icon: Icons.agriculture_rounded,
                     color: Colors.teal.shade700,
@@ -535,7 +541,48 @@ class HomeScreen extends ConsumerWidget {
               ),
             ),
 
-            const SizedBox(height: 20),
+            // Sponsored Advertisements Section (Admin-Controlled)
+            Consumer(
+              builder: (context, ref, child) {
+                final sponsoredAsync = ref.watch(sponsoredAdsProvider);
+                return sponsoredAsync.when(
+                  data: (sponsoredAds) {
+                    if (sponsoredAds.isEmpty) return const SizedBox.shrink();
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.campaign_rounded, size: 18, color: AppColors.accentYellow),
+                              const SizedBox(width: 6),
+                              Text(
+                                'नरडाणा विशेष जाहिराती (Sponsored)',
+                                style: GoogleFonts.mukta(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          ...sponsoredAds.map((ad) => Padding(
+                                padding: const EdgeInsets.only(bottom: 12.0),
+                                child: SponsoredAdCard(ad: ad),
+                              )),
+                        ],
+                      ),
+                    );
+                  },
+                  loading: () => const SizedBox.shrink(),
+                  error: (e, s) => const SizedBox.shrink(),
+                );
+              },
+            ),
+
+            const SizedBox(height: 14),
 
             // Jobs and Marketplace Banner Cards
             Padding(

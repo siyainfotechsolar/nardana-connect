@@ -53,7 +53,7 @@ class _SearchScreenState extends State<SearchScreen> {
       'owner': 'दिनेश चौधरी',
       'phone': '9765432100',
       'village': 'नरडाणा',
-      'address': 'वाघाळी फाटा, नरडाणा',
+      'address': 'हायवे चौक, नरडाणा',
       'desc': 'नांगरणी, रोटाव्हेटर आणि पेरणीसाठी महिंद्रा ट्रॅक्टर वेळेवर उपलब्ध.',
       'opening_hours': '२४ तास सेवा',
     },
@@ -72,8 +72,8 @@ class _SearchScreenState extends State<SearchScreen> {
       'category': 'सुतार / कारपेंटर',
       'owner': 'अमोल सुतार',
       'phone': '9822334455',
-      'village': 'वाघाळी',
-      'address': 'वाघाळी गावठाण, ता. शिंदखेडा',
+      'village': 'नरडाणा',
+      'address': 'कुंभार गल्ली, नरडाणा',
       'desc': 'सर्व प्रकारचे लाकडी दरवाजे, खिडक्या व कपाट बनवणे व दुरुस्तीचे काम.',
       'opening_hours': 'सकाळी ८:३० ते संध्याकाळी ६:३०',
     },
@@ -82,8 +82,8 @@ class _SearchScreenState extends State<SearchScreen> {
       'category': 'प्लंबर',
       'owner': 'कैलास माळी',
       'phone': '9421889900',
-      'village': 'होळ',
-      'address': 'होळ फाटा, नरडाणा',
+      'village': 'नरडाणा',
+      'address': 'स्टेशन परिसर, नरडाणा',
       'desc': 'घरगुती व शेतातील पाईपलाईन लीकेज दुरुस्ती व नवीन नळ जोडणी.',
       'opening_hours': 'सकाळी ८:०० ते संध्याकाळी ८:००',
     },
@@ -163,7 +163,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   clipBehavior: Clip.antiAlias,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(14),
-                    side: Border.all(color: AppColors.border),
+                    side: const BorderSide(color: AppColors.border),
                   ),
                   child: ListTile(
                     onTap: () {
@@ -173,7 +173,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         'owner': r['owner'],
                         'phone': r['phone'],
                         'village': r['village'],
-                        'address': r['address'] ?? '${r['village']}, नरडाणा परिसर',
+                        'address': r['address'] ?? 'मुख्य बाजारपेठ, नरडाणा',
                         'desc': r['desc'] ?? 'विश्वसनीय स्थानिक सेवा',
                         'opening_hours': r['opening_hours'] ?? 'सकाळी ९:०० ते रात्री ८:००',
                       });

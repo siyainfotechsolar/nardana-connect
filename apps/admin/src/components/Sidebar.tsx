@@ -8,18 +8,20 @@ import {
   Briefcase, 
   ShoppingBag, 
   Bell, 
+  Megaphone,
   Settings,
   ShieldCheck
 } from 'lucide-react';
 
 const navItems = [
   { to: '/', label: 'डॅशबोर्ड (Dashboard)', icon: LayoutDashboard },
-  { to: '/villages', label: 'गावे (Villages)', icon: MapPin },
+  { to: '/villages', label: 'गाव माहिती (Village Profile)', icon: MapPin },
   { to: '/categories', label: 'कॅटेगरी (Categories)', icon: Layers },
   { to: '/businesses', label: 'व्यवसाय व सेवा (Businesses)', icon: Store },
   { to: '/jobs', label: 'रोजगार (Jobs)', icon: Briefcase },
   { to: '/marketplace', label: 'बाजारपेठ (Marketplace)', icon: ShoppingBag },
   { to: '/notices', label: 'गाव सूचना (Notices)', icon: Bell },
+  { to: '/advertisements', label: 'जाहिराती (Advertisements)', icon: Megaphone },
   { to: '/settings', label: 'सेटिंग्ज (Settings)', icon: Settings },
 ];
 
