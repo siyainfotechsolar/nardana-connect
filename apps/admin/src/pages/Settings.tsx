@@ -204,9 +204,9 @@ export const Settings: React.FC = () => {
           </h3>
           <div className="space-y-1.5 text-xs text-slate-600">
             <p><strong>प्रकल्प (Project):</strong> Nardana Connect (zrnukpkufwrexrvysmpw)</p>
-            <p><strong>डेटाबेस:</strong> Supabase PostgreSQL (16 Tables)</p>
+            <p><strong>डेटाबेस:</strong> Supabase PostgreSQL (18 Tables)</p>
             <p><strong>FCM पुश नोटिफिकेशन्स:</strong> village-seva-2026</p>
-            <p><strong>साठवणूक:</strong> business-photos, notice-attachments</p>
+            <p><strong>साठवणूक:</strong> business-photos, notice-attachments, advertisements</p>
           </div>
         </div>
 
