@@ -10,6 +10,9 @@ import {
   Bell, 
   Megaphone,
   Smartphone,
+  Users,
+  Vote,
+  BarChart3,
   Settings,
   ShieldCheck
 } from 'lucide-react';
@@ -23,6 +26,9 @@ const navItems = [
   { to: '/marketplace', label: 'बाजारपेठ (Marketplace)', icon: ShoppingBag },
   { to: '/notices', label: 'गाव सूचना (Notices)', icon: Bell },
   { to: '/advertisements', label: 'जाहिराती (Advertisements)', icon: Megaphone },
+  { to: '/users', label: 'नागरिक व वापरकर्ते (Users)', icon: Users },
+  { to: '/election', label: 'निवडणूक व उमेदवार (Election)', icon: Vote },
+  { to: '/reports', label: 'अहवाल व आकडेवारी (Reports)', icon: BarChart3 },
   { to: '/app-update', label: 'ॲप अपडेट (App Update)', icon: Smartphone },
   { to: '/settings', label: 'सेटिंग्ज (Settings)', icon: Settings },
 ];

@@ -97,3 +97,4 @@ class AppUpdateConfigModel {
     return lang.toLowerCase() == 'en' ? maintenanceMessageEn : maintenanceMessageMr;
   }
 }
+

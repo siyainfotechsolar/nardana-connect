@@ -13,7 +13,10 @@ import {
   ArrowUpRight,
   Plus,
   RefreshCw,
-  ExternalLink
+  ExternalLink,
+  Users,
+  Vote,
+  BarChart3
 } from 'lucide-react';
 
 interface Stats {
@@ -154,6 +157,33 @@ export const Dashboard: React.FC = () => {
       to: '/advertisements',
       subtitle: 'बॅनर व प्रायोजित जाहिराती'
     },
+    { 
+      title: 'नागरिक व वापरकर्ते (Users)', 
+      value: '१,८५०+', 
+      icon: Users, 
+      color: 'text-sky-600', 
+      bg: 'bg-sky-50',
+      to: '/users',
+      subtitle: 'नोंदणीकृत गावकरी नागरिक'
+    },
+    { 
+      title: 'निवडणूक व उमेदवार (Election)', 
+      value: '३ उमेदवार', 
+      icon: Vote, 
+      color: 'text-amber-600', 
+      bg: 'bg-amber-50',
+      to: '/election',
+      subtitle: 'ग्रामपंचायत प्रभाग उमेदवार'
+    },
+    { 
+      title: 'ग्राम अहवाल व आकडेवारी (Reports)', 
+      value: '६ अहवाल', 
+      icon: BarChart3, 
+      color: 'text-indigo-600', 
+      bg: 'bg-indigo-50',
+      to: '/reports',
+      subtitle: 'मासिक प्रगती व विश्लेषण'
+    },
   ];
 
   return (
@@ -231,6 +261,24 @@ export const Dashboard: React.FC = () => {
           className="px-3 py-1.5 rounded-lg bg-rose-50 text-rose-800 hover:bg-rose-100 text-xs font-semibold transition flex items-center gap-1.5 border border-rose-200"
         >
           <Megaphone className="w-3.5 h-3.5" /> + जाहिरात जोडा
+        </button>
+        <button
+          onClick={() => navigate('/users')}
+          className="px-3 py-1.5 rounded-lg bg-sky-50 text-sky-800 hover:bg-sky-100 text-xs font-semibold transition flex items-center gap-1.5 border border-sky-200"
+        >
+          <Users className="w-3.5 h-3.5" /> नागरिक यादी
+        </button>
+        <button
+          onClick={() => navigate('/election')}
+          className="px-3 py-1.5 rounded-lg bg-amber-50 text-amber-800 hover:bg-amber-100 text-xs font-semibold transition flex items-center gap-1.5 border border-amber-200"
+        >
+          <Vote className="w-3.5 h-3.5" /> निवडणूक उमेदवार
+        </button>
+        <button
+          onClick={() => navigate('/reports')}
+          className="px-3 py-1.5 rounded-lg bg-purple-50 text-purple-800 hover:bg-purple-100 text-xs font-semibold transition flex items-center gap-1.5 border border-purple-200"
+        >
+          <BarChart3 className="w-3.5 h-3.5" /> ग्राम अहवाल
         </button>
       </div>
 

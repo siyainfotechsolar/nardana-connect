@@ -161,3 +161,4 @@ class CandidateDetailScreen extends StatelessWidget {
     );
   }
 }
+

@@ -45,3 +45,4 @@ final appUpdateNotifierProvider =
   final service = ref.watch(appUpdateServiceProvider);
   return AppUpdateNotifier(service);
 });
+

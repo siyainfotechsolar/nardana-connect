@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { 
   Server, 
@@ -215,6 +216,27 @@ export const Settings: React.FC = () => {
             <p className="text-slate-400 font-mono text-[11px]">#0D2745 (Sidebar)</p>
           </div>
         </div>
+      </div>
+
+      {/* App Update Manager Quick Access */}
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl border border-blue-200 p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h3 className="font-bold text-sm text-brand-blue flex items-center gap-2">
+            <Smartphone className="w-4 h-4" />
+            <span>ॲप आवृत्ती आणि सक्तीचे अपडेट व्यवस्थापन (App Update Manager)</span>
+          </h3>
+          <p className="text-xs text-slate-600 mt-1">
+            नवीन व्हर्जन नियम, सक्तीचे अपडेट आणि मेंटेनन्स मोड येथून नियंत्रित करा.
+          </p>
+        </div>
+        <Link
+          to="/app-update"
+          state={{ from: '/settings' }}
+          className="inline-flex items-center gap-2 px-4 py-2 bg-brand-blue hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-sm transition whitespace-nowrap self-start sm:self-auto"
+        >
+          <span>अपडेट व्यवस्थापक उघडा</span>
+          <ExternalLink className="w-3.5 h-3.5" />
+        </Link>
       </div>
 
       {/* Backend & Deployment Status */}

@@ -173,3 +173,4 @@ SELECT
     'Super Admin'
 FROM public.app_update_config
 WHERE platform = 'android';
+

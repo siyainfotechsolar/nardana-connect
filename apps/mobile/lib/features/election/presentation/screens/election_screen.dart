@@ -127,3 +127,4 @@ class ElectionScreen extends StatelessWidget {
     );
   }
 }
+

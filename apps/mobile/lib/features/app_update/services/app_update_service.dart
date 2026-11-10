@@ -229,3 +229,4 @@ class AppUpdateService {
     return false;
   }
 }
+

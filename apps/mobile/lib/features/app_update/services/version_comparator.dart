@@ -68,3 +68,4 @@ class VersionComparator {
     return latestBuild > installedBuild;
   }
 }
+
