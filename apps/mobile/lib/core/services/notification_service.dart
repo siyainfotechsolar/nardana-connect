@@ -45,12 +45,15 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       styleInformation: BigTextStyleInformation(body),
     );
 
+    final eventId = message.data['event_id'];
+    final targetRoute = message.data['route'] ?? (eventId != null && eventId.toString().isNotEmpty ? '/update-detail?id=$eventId' : '/notices');
+
     await _localNotificationsPlugin.show(
       id,
       title,
       body,
       NotificationDetails(android: androidDetails),
-      payload: message.data['route'] ?? '/notices',
+      payload: targetRoute,
     );
   }
 }
@@ -135,11 +138,15 @@ class NotificationService {
         final type = message.data['type'] ?? 'announcement';
 
         // Trigger local notification so it appears in notification shade & lock screen
+        final eventId = message.data['event_id'];
+        final targetRoute = message.data['route'] ??
+            (eventId != null && eventId.toString().isNotEmpty ? '/update-detail?id=$eventId' : '/notices');
+
         showLocalNotification(
           id: message.messageId.hashCode,
           title: title,
           body: body,
-          payload: message.data['route'] ?? '/notices',
+          payload: targetRoute,
           type: type,
         );
 
@@ -156,7 +163,9 @@ class NotificationService {
       // 8. Handle notification tapped by user when app is in background
       FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
         developer.log('Notification tapped from background: ${message.data}');
-        final route = message.data['route'] ?? '/notices';
+        final eventId = message.data['event_id'];
+        final route = message.data['route'] ??
+            (eventId != null && eventId.toString().isNotEmpty ? '/update-detail?id=$eventId' : '/notices');
         appRouter.push(route);
       });
 
@@ -164,7 +173,9 @@ class NotificationService {
       final initialMessage = await messaging.getInitialMessage();
       if (initialMessage != null) {
         developer.log('App launched from terminated state via notification: ${initialMessage.data}');
-        final route = initialMessage.data['route'] ?? '/notices';
+        final eventId = initialMessage.data['event_id'];
+        final route = initialMessage.data['route'] ??
+            (eventId != null && eventId.toString().isNotEmpty ? '/update-detail?id=$eventId' : '/notices');
         Future.delayed(const Duration(milliseconds: 600), () {
           appRouter.push(route);
         });
@@ -301,12 +312,16 @@ class NotificationService {
               final body = newRecord['body_mr'] ?? newRecord['body_en'] ?? '';
               final type = newRecord['type'] ?? 'announcement';
 
+              final eventId = newRecord['event_id'];
+              final route = newRecord['route'] ??
+                  (eventId != null && eventId.toString().isNotEmpty ? '/update-detail?id=$eventId' : '/notices');
+
               // Show local notification for Realtime events so it lights up lock screen
               showLocalNotification(
                 id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
                 title: title,
                 body: body,
-                payload: '/notices',
+                payload: route,
                 type: type,
               );
 

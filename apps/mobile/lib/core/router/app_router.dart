@@ -34,6 +34,10 @@ import 'package:nardana_connect/features/vehicles/presentation/screens/vehicle_d
 import 'package:nardana_connect/features/vehicles/presentation/screens/submit_vehicle_screen.dart';
 import 'package:nardana_connect/features/legal/presentation/screens/disclaimer_screen.dart';
 import 'package:nardana_connect/features/bus/presentation/screens/bus_timetable_screen.dart';
+import 'package:nardana_connect/features/updates/models/village_update_model.dart';
+import 'package:nardana_connect/features/updates/presentation/screens/village_updates_screen.dart';
+import 'package:nardana_connect/features/updates/presentation/screens/update_detail_screen.dart';
+import 'package:nardana_connect/features/updates/presentation/screens/submit_update_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -216,6 +220,31 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/bus-timetable',
       builder: (context, state) => const BusTimetableScreen(),
+    ),
+    GoRoute(
+      path: '/village-updates',
+      builder: (context, state) {
+        final category = state.extra as String?;
+        return VillageUpdatesScreen(initialCategory: category);
+      },
+    ),
+    GoRoute(
+      path: '/update-detail',
+      builder: (context, state) {
+        if (state.extra is VillageUpdateModel) {
+          return UpdateDetailScreen(update: state.extra as VillageUpdateModel);
+        } else if (state.extra is Map<String, dynamic>) {
+          final map = state.extra as Map<String, dynamic>;
+          final eventId = map['event_id']?.toString() ?? map['id']?.toString();
+          return UpdateDetailScreen(eventId: eventId);
+        }
+        final eventId = state.uri.queryParameters['id'] ?? state.uri.queryParameters['event_id'];
+        return UpdateDetailScreen(eventId: eventId);
+      },
+    ),
+    GoRoute(
+      path: '/submit-update',
+      builder: (context, state) => const SubmitUpdateScreen(),
     ),
   ],
 );

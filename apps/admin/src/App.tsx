@@ -31,6 +31,7 @@ import { AuditLogs } from './pages/AuditLogs';
 import { Vehicles } from './pages/Vehicles';
 import { DisclaimerManager } from './pages/DisclaimerManager';
 import { BusTimeTable } from './pages/BusTimeTable';
+import { VillageUpdates } from './pages/VillageUpdates';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -80,6 +81,7 @@ export const App: React.FC = () => {
                 <Route path="audit-logs" element={<AuditLogs />} />
                 <Route path="vehicles" element={<Vehicles />} />
                 <Route path="bus-timetable" element={<BusTimeTable />} />
+                <Route path="village-updates" element={<VillageUpdates />} />
                 <Route path="disclaimer" element={<DisclaimerManager />} />
                 <Route path="app-update" element={<AppUpdate />} />
                 <Route path="settings" element={<Settings />} />

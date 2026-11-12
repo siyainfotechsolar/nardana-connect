@@ -10,6 +10,9 @@ import 'package:nardana_connect/features/advertisements/presentation/widgets/spo
 import 'package:nardana_connect/features/advertisements/providers/advertisement_provider.dart';
 import 'package:nardana_connect/features/app_update/services/app_update_service.dart';
 import 'package:nardana_connect/features/app_update/presentation/widgets/optional_update_dialog.dart';
+import 'package:nardana_connect/features/updates/models/village_update_model.dart';
+import 'package:nardana_connect/features/updates/services/village_updates_service.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
@@ -20,13 +23,53 @@ class HomeScreen extends ConsumerStatefulWidget {
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObserver {
+  List<VillageUpdateModel> _villageUpdates = [];
+  bool _isLoadingUpdates = true;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkAppUpdates();
+      _loadVillageUpdates();
     });
+  }
+
+  Future<void> _loadVillageUpdates() async {
+    try {
+      final list = await VillageUpdatesService.instance.getPublishedUpdates();
+      if (mounted) {
+        setState(() {
+          _villageUpdates = list;
+          _isLoadingUpdates = false;
+        });
+      }
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _isLoadingUpdates = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _shareUpdateOnWhatsApp(VillageUpdateModel item) async {
+    final message = '''
+*${item.categoryIcon} ${item.titleMr}*
+📍 ठिकाण: ${item.venueMr ?? 'नरडाणा'}
+📅 दिनांक: ${item.eventDate ?? ''} ${item.eventTime ?? ''}
+👤 आयोजक: ${item.organizerName ?? 'नरडाणा ग्रामस्थ'}
+
+${item.descriptionMr}
+
+👉 नरडाणा गावातील सर्व घडामोडी पाहण्यासाठी Nardana Connect ॲप डाऊनलोड करा:
+https://nardana-connect.vercel.app/download.html
+''';
+    final url = Uri.parse('https://wa.me/?text=${Uri.encodeComponent(message)}');
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    }
   }
 
   @override
@@ -553,6 +596,11 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
                 ),
               ),
             ),
+
+            const SizedBox(height: 16),
+
+            // Village Latest Updates Section (गावातील नवीन घडामोडी)
+            _buildVillageUpdatesSection(),
 
             const SizedBox(height: 16),
 
@@ -1307,6 +1355,299 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
                   style: GoogleFonts.mukta(fontSize: 10.5, fontWeight: FontWeight.bold, color: AppColors.primaryBlue),
                 ),
               ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVillageUpdatesSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.campaign_rounded, size: 20, color: AppColors.primaryBlue),
+                  const SizedBox(width: 6),
+                  Text(
+                    'गावातील नवीन घडामोडी',
+                    style: GoogleFonts.mukta(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                ],
+              ),
+              InkWell(
+                onTap: () => context.push('/village-updates'),
+                child: Row(
+                  children: [
+                    Text(
+                      'सर्व पहा',
+                      style: GoogleFonts.mukta(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryBlue,
+                      ),
+                    ),
+                    const Icon(Icons.chevron_right_rounded, size: 16, color: AppColors.primaryBlue),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 10),
+        if (_isLoadingUpdates)
+          const SizedBox(
+            height: 180,
+            child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+          )
+        else if (_villageUpdates.isEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.event_note_rounded, color: AppColors.primaryBlue, size: 24),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      'सध्या कोणतीही नवीन घडामोड नाही.',
+                      style: GoogleFonts.mukta(fontSize: 13, color: AppColors.textSecondary),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          )
+        else
+          SizedBox(
+            height: 225,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: _villageUpdates.length,
+              separatorBuilder: (context, index) => const SizedBox(width: 12),
+              itemBuilder: (context, index) {
+                final update = _villageUpdates[index];
+                return _buildVillageUpdateCard(update);
+              },
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildVillageUpdateCard(VillageUpdateModel item) {
+    return InkWell(
+      onTap: () => context.push('/update-detail', extra: item),
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        width: 250,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.border),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.04),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Poster / Category Header
+            Stack(
+              children: [
+                if (item.posterUrl != null && item.posterUrl!.isNotEmpty)
+                  CachedNetworkImage(
+                    imageUrl: item.posterUrl!,
+                    height: 105,
+                    width: double.infinity,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      height: 105,
+                      color: Colors.grey.shade200,
+                      child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      height: 105,
+                      color: item.categoryColor.withValues(alpha: 0.15),
+                      child: Center(
+                        child: Text(item.categoryIcon, style: const TextStyle(fontSize: 36)),
+                      ),
+                    ),
+                  )
+                else
+                  Container(
+                    height: 105,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          item.categoryColor.withValues(alpha: 0.8),
+                          item.categoryColor,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(item.categoryIcon, style: const TextStyle(fontSize: 38)),
+                    ),
+                  ),
+
+                // Category Tag Pill
+                Positioned(
+                  top: 8,
+                  left: 8,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.75),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(item.categoryIcon, style: const TextStyle(fontSize: 10)),
+                        const SizedBox(width: 4),
+                        Text(
+                          item.categoryLabel,
+                          style: GoogleFonts.mukta(
+                            color: Colors.white,
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Date Pill
+                if (item.eventDate != null)
+                  Positioned(
+                    top: 8,
+                    right: 8,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryBlue,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        item.eventDate!,
+                        style: GoogleFonts.mukta(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+
+            // Card Body
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item.titleMr,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.mukta(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textPrimary,
+                        height: 1.25,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    if (item.venueMr != null && item.venueMr!.isNotEmpty)
+                      Row(
+                        children: [
+                          const Icon(Icons.location_on_rounded, size: 12, color: Colors.red),
+                          const SizedBox(width: 3),
+                          Expanded(
+                            child: Text(
+                              item.venueMr!,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.mukta(
+                                fontSize: 11,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    const Spacer(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'सविस्तर पहा →',
+                          style: GoogleFonts.mukta(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primaryBlue,
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () => _shareUpdateOnWhatsApp(item),
+                          borderRadius: BorderRadius.circular(12),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                            decoration: BoxDecoration(
+                              color: AppColors.secondaryGreen.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: AppColors.secondaryGreen.withValues(alpha: 0.3)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.chat_rounded, size: 12, color: AppColors.secondaryGreen),
+                                const SizedBox(width: 4),
+                                Text(
+                                  'शेअर',
+                                  style: GoogleFonts.mukta(
+                                    fontSize: 10.5,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.secondaryGreen,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ),
           ],
         ),

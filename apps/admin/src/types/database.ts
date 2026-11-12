@@ -161,8 +161,50 @@ export interface AppUpdateHistory {
   optional_update_enabled: boolean;
   maintenance_mode: boolean;
   change_summary?: string;
-  updated_by: string;
+  changed_by?: string;
+  updated_by?: string;
   created_at: string;
+}
+
+export type VillageUpdateCategory =
+  | 'kirtan_bhajan'
+  | 'school_education'
+  | 'cultural'
+  | 'festival'
+  | 'shop_opening'
+  | 'health_camp'
+  | 'village_news'
+  | 'announcement'
+  | 'advertisement'
+  | 'invitation'
+  | 'other';
+
+export interface VillageUpdate {
+  id: string;
+  village_id: string;
+  category: VillageUpdateCategory;
+  title_mr: string;
+  title_en?: string;
+  description_mr: string;
+  description_en?: string;
+  event_date?: string | null;
+  event_time?: string | null;
+  venue_mr?: string | null;
+  venue_en?: string | null;
+  organizer_name?: string | null;
+  organizer_contact?: string | null;
+  poster_url?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+  status: 'draft' | 'pending' | 'published' | 'rejected' | 'cancelled' | 'expired';
+  is_approved: boolean;
+  submitted_by_user_id?: string | null;
+  notification_sent: boolean;
+  notification_sent_at?: string | null;
+  reminder_enabled: boolean;
+  reminder_sent_at?: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 
