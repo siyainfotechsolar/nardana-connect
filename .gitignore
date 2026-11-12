@@ -16,6 +16,7 @@ dist-ssr/
 
 # Flutter & Dart
 *.apk
+!apps/admin/public/app-release.apk
 .dart_tool/
 .packages
 .pub-cache/
