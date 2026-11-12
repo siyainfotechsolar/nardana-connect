@@ -12,15 +12,22 @@ import { Dashboard } from './pages/Dashboard';
 import { Villages } from './pages/Villages';
 import { Categories } from './pages/Categories';
 import { Businesses } from './pages/Businesses';
+import { Services } from './pages/Services';
 import { Jobs } from './pages/Jobs';
 import { Marketplace } from './pages/Marketplace';
 import { Notices } from './pages/Notices';
+import { EmergencyContacts } from './pages/EmergencyContacts';
 import { Advertisements } from './pages/Advertisements';
 import { Users } from './pages/Users';
 import { Election } from './pages/Election';
-import { Reports } from './pages/Reports';
-import { AppUpdate } from './pages/AppUpdate';
+import { Complaints } from './pages/Complaints';
+import { Reviews } from './pages/Reviews';
+import { Notifications } from './pages/Notifications';
+import { HomeLayout } from './pages/HomeLayout';
 import { Settings } from './pages/Settings';
+import { AppUpdate } from './pages/AppUpdate';
+import { Reports } from './pages/Reports';
+import { AuditLogs } from './pages/AuditLogs';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -52,15 +59,22 @@ export const App: React.FC = () => {
               >
                 <Route index element={<Dashboard />} />
                 <Route path="villages" element={<Villages />} />
+                <Route path="users" element={<Users />} />
                 <Route path="categories" element={<Categories />} />
                 <Route path="businesses" element={<Businesses />} />
+                <Route path="services" element={<Services />} />
                 <Route path="jobs" element={<Jobs />} />
                 <Route path="marketplace" element={<Marketplace />} />
                 <Route path="notices" element={<Notices />} />
+                <Route path="emergency-contacts" element={<EmergencyContacts />} />
                 <Route path="advertisements" element={<Advertisements />} />
-                <Route path="users" element={<Users />} />
                 <Route path="election" element={<Election />} />
+                <Route path="complaints" element={<Complaints />} />
+                <Route path="reviews" element={<Reviews />} />
+                <Route path="notifications" element={<Notifications />} />
+                <Route path="home-layout" element={<HomeLayout />} />
                 <Route path="reports" element={<Reports />} />
+                <Route path="audit-logs" element={<AuditLogs />} />
                 <Route path="app-update" element={<AppUpdate />} />
                 <Route path="settings" element={<Settings />} />
               </Route>

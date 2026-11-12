@@ -124,7 +124,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'Developed with ❤️ by Siya Infotech & Solar Energy',
+                    'Developed with ❤️ by Siya Infotech (Nardana)',
                     style: GoogleFonts.mukta(fontSize: 12, color: AppColors.textMuted),
                   ),
                 ],

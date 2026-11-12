@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:nardana_connect/core/constants/app_colors.dart';
 import 'package:nardana_connect/core/localization/app_localizations.dart';
 import 'package:nardana_connect/features/village/providers/village_provider.dart';
-import 'package:nardana_connect/features/village/presentation/screens/village_selector_dialog.dart';
 import 'package:nardana_connect/features/advertisements/presentation/widgets/home_ad_carousel.dart';
 import 'package:nardana_connect/features/advertisements/presentation/widgets/sponsored_ad_card.dart';
 import 'package:nardana_connect/features/advertisements/providers/advertisement_provider.dart';
@@ -71,10 +70,72 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
     }
   }
 
-  void _showVillageDialog(BuildContext context) {
+  String _getGreeting() {
+    final hour = DateTime.now().hour;
+    if (hour < 12) return 'शुभ प्रभात!';
+    if (hour < 17) return 'शुभ दुपार!';
+    return 'शुभ संध्याकाळ!';
+  }
+
+  void _showNardanaProfileDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (ctx) => const VillageSelectorDialog(),
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+        title: Row(
+          children: [
+            const Icon(Icons.location_on_rounded, color: AppColors.secondaryGreen, size: 24),
+            const SizedBox(width: 8),
+            Text(
+              'नरडाणा गाव माहिती (Profile)',
+              style: GoogleFonts.mukta(fontWeight: FontWeight.bold, fontSize: 16),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildDialogRow('अधिकृत गाव', 'नरडाणा (Nardana)'),
+            const Divider(height: 14),
+            _buildDialogRow('पिनकोड (PIN)', '४२५४०४'),
+            const Divider(height: 14),
+            _buildDialogRow('तालुका', 'शिंदखेडा (Shindkheda)'),
+            const Divider(height: 14),
+            _buildDialogRow('जिल्हा', 'धुळे (Dhule)'),
+            const SizedBox(height: 14),
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppColors.secondaryGreen.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: AppColors.secondaryGreen.withValues(alpha: 0.2)),
+              ),
+              child: Text(
+                'नरडाणा कनेक्ट हे केवळ नरडाणा गावासाठीचे अधिकृत डिजिटल व्यासपीठ आहे.',
+                style: GoogleFonts.mukta(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.secondaryGreen),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          ElevatedButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryBlue, foregroundColor: Colors.white),
+            child: Text('समजले', style: GoogleFonts.mukta(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDialogRow(String label, String value) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(label, style: GoogleFonts.mukta(fontSize: 13, color: AppColors.textSecondary)),
+        Text(value, style: GoogleFonts.mukta(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
+      ],
     );
   }
 
@@ -130,14 +191,28 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  l10n.translate('app_name'),
-                  style: GoogleFonts.mukta(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    height: 1.1,
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      l10n.translate('app_name'),
+                      style: GoogleFonts.mukta(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        height: 1.1,
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    Text(
+                      '• ${_getGreeting()}',
+                      style: GoogleFonts.mukta(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.accentYellow,
+                      ),
+                    ),
+                  ],
                 ),
                 Text(
                   'आपलं गाव, आपली डिजिटल ओळख!',
@@ -155,7 +230,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
           Padding(
             padding: const EdgeInsets.only(right: 12.0),
             child: InkWell(
-              onTap: () => _showVillageDialog(context),
+              onTap: () => _showNardanaProfileDialog(context),
               borderRadius: BorderRadius.circular(20),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),

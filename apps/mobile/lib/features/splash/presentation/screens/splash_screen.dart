@@ -142,7 +142,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             const SizedBox(height: 24),
             Text(
-              'विकसित: सिया इन्फोटेक अँड सोलर एनर्जी',
+              'विकसित: सिया इन्फोटेक (नरडाणा)',
               style: GoogleFonts.mukta(
                 fontSize: 13,
                 fontWeight: FontWeight.w600,
@@ -150,7 +150,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             ),
             Text(
-              'Developed by Siya Infotech & Solar Energy',
+              'Developed by Siya Infotech (Nardana)',
               style: GoogleFonts.mukta(
                 fontSize: 11,
                 fontWeight: FontWeight.w500,
