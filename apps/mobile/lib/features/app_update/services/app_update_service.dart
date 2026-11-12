@@ -197,7 +197,7 @@ class AppUpdateService {
   }
 
   static const String officialDownloadPortalUrl = 'https://nardana-connect.vercel.app/download.html';
-  static const String directApkDownloadUrl = 'https://github.com/siyainfotechsolar/nardana-connect/releases/download/v1.0.0/app-release.apk';
+  static const String directApkDownloadUrl = 'https://nardana-connect.vercel.app/app-release.apk';
 
   /// Launches the official download portal in external browser
   Future<bool> launchDownloadPortal() async {

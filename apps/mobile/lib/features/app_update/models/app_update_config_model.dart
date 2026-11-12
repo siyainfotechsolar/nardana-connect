@@ -68,7 +68,7 @@ class AppUpdateConfigModel {
       playStoreUrl: json['play_store_url'] as String? ??
           'https://play.google.com/store/apps/details?id=in.nardana.connect.nardana_connect',
       apkDownloadUrl: json['apk_download_url'] as String? ??
-          'https://github.com/siyainfotechsolar/nardana-connect/releases/download/v1.0.0/app-release.apk',
+          'https://nardana-connect.vercel.app/app-release.apk',
       maintenanceMode: json['maintenance_mode'] as bool? ?? false,
       maintenanceMessageMr: json['maintenance_message_mr'] as String? ??
           'नरडाणा कनेक्ट ॲप सध्या नियोजित तांत्रिक देखभालीसाठी तात्पुरते बंद आहे. कृपया थोड्या वेळाने पुन्हा प्रयत्न करा.',
