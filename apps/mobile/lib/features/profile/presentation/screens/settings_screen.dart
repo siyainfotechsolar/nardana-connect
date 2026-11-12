@@ -7,6 +7,7 @@ import 'package:nardana_connect/core/constants/app_colors.dart';
 import 'package:nardana_connect/core/localization/locale_provider.dart';
 import 'package:nardana_connect/core/navigation/app_back_scope.dart';
 import 'package:nardana_connect/core/navigation/back_button_handler.dart';
+import 'package:nardana_connect/features/app_update/services/app_update_service.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -96,19 +97,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ListTile(
                     leading: const Icon(Icons.system_update_rounded, color: AppColors.primaryBlue),
                     title: Text('ॲप आवृत्ती (App Version)', style: GoogleFonts.mukta(fontWeight: FontWeight.w600)),
-                    subtitle: Text('v$_version (Build $_buildNumber)', style: GoogleFonts.mukta(fontSize: 12, color: AppColors.textSecondary)),
-                    trailing: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                      decoration: BoxDecoration(
-                        color: Colors.green.shade50,
-                        borderRadius: BorderRadius.circular(6),
-                        border: Border.all(color: Colors.green.shade200),
-                      ),
-                      child: Text(
-                        'अद्ययावत',
-                        style: GoogleFonts.mukta(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.green.shade800),
+                    subtitle: Text('v$_version (Build $_buildNumber) • नवीन APK डाऊनलोड करण्यासाठी क्लिक करा', style: GoogleFonts.mukta(fontSize: 12, color: AppColors.textSecondary)),
+                    trailing: ElevatedButton.icon(
+                      onPressed: () => AppUpdateService.instance.launchDirectApkDownload(),
+                      icon: const Icon(Icons.download_rounded, size: 14),
+                      label: Text('डाऊनलोड', style: GoogleFonts.mukta(fontSize: 11, fontWeight: FontWeight.bold)),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.secondaryGreen,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       ),
                     ),
+                    onTap: () => AppUpdateService.instance.launchDirectApkDownload(),
                   ),
                 ],
               ),

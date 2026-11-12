@@ -151,11 +151,13 @@ class OptionalUpdateDialog extends ConsumerWidget {
             ),
           ),
         ),
-        ElevatedButton(
+        ElevatedButton.icon(
           onPressed: () {
             Navigator.of(context).pop();
             ref.read(appUpdateServiceProvider).launchUpdateUrl(config);
           },
+          icon: const Icon(Icons.download_rounded, size: 18),
+          label: Text(isMr ? 'नवीन APK डाऊनलोड करा' : 'Download APK'),
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.secondaryGreen,
             foregroundColor: Colors.white,
@@ -166,7 +168,6 @@ class OptionalUpdateDialog extends ConsumerWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          child: Text(isMr ? 'आता अपडेट करा' : 'Update Now'),
         ),
       ],
     );

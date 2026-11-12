@@ -196,37 +196,53 @@ class AppUpdateService {
     }
   }
 
-  /// Launches Google Play Store or APK URL
-  Future<bool> launchUpdateUrl(AppUpdateConfigModel config) async {
-    // 1. Try native market:// scheme
-    final marketUri = Uri.parse('market://details?id=in.nardana.connect.nardana_connect');
-    if (await canLaunchUrl(marketUri)) {
-      try {
-        final success = await launchUrl(marketUri, mode: LaunchMode.externalApplication);
-        if (success) return true;
-      } catch (_) {}
-    }
+  static const String officialDownloadPortalUrl = 'https://nardana-connect.vercel.app/download.html';
+  static const String directApkDownloadUrl = 'https://github.com/siyainfotechsolar/nardana-connect/releases/download/v1.0.0/app-release.apk';
 
-    // 2. Try Play Store Web URL
-    if (config.playStoreUrl.isNotEmpty) {
-      final playUri = Uri.parse(config.playStoreUrl);
-      if (await canLaunchUrl(playUri)) {
-        try {
-          final success = await launchUrl(playUri, mode: LaunchMode.externalApplication);
-          if (success) return true;
-        } catch (_) {}
+  /// Launches the official download portal in external browser
+  Future<bool> launchDownloadPortal() async {
+    final uri = Uri.parse(officialDownloadPortalUrl);
+    try {
+      if (await canLaunchUrl(uri)) {
+        return await launchUrl(uri, mode: LaunchMode.externalApplication);
       }
+    } catch (e) {
+      debugPrint('Error launching download portal: $e');
     }
-
-    // 3. Fallback to APK Download URL
-    if (config.apkDownloadUrl.isNotEmpty) {
-      final apkUri = Uri.parse(config.apkDownloadUrl);
-      if (await canLaunchUrl(apkUri)) {
-        return await launchUrl(apkUri, mode: LaunchMode.externalApplication);
-      }
-    }
-
     return false;
+  }
+
+  /// Launches direct APK download in external browser
+  Future<bool> launchDirectApkDownload([String? url]) async {
+    final target = (url != null && url.isNotEmpty) ? url : directApkDownloadUrl;
+    final uri = Uri.parse(target);
+    try {
+      if (await canLaunchUrl(uri)) {
+        final success = await launchUrl(uri, mode: LaunchMode.externalApplication);
+        if (success) return true;
+      }
+    } catch (e) {
+      debugPrint('Error launching direct APK download: $e');
+    }
+    return launchDownloadPortal();
+  }
+
+  /// Launches direct APK URL or Download Portal
+  Future<bool> launchUpdateUrl(AppUpdateConfigModel config) async {
+    // 1. Direct APK Download URL (starts downloading immediately)
+    final targetUrl = config.apkDownloadUrl.isNotEmpty ? config.apkDownloadUrl : directApkDownloadUrl;
+    final apkUri = Uri.parse(targetUrl);
+    try {
+      if (await canLaunchUrl(apkUri)) {
+        final success = await launchUrl(apkUri, mode: LaunchMode.externalApplication);
+        if (success) return true;
+      }
+    } catch (e) {
+      debugPrint('Error launching apkUri: $e');
+    }
+
+    // 2. Open Official Download Portal as safe fallback
+    return await launchDownloadPortal();
   }
 }
 

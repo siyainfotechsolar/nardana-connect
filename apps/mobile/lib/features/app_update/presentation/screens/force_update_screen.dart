@@ -91,13 +91,18 @@ class _ForceUpdateScreenState extends ConsumerState<ForceUpdateScreen>
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'प्ले स्टोअर उघडताना अडचण आली. कृपया डाऊनलोड पोर्टलवरून APK मिळवा.',
+            'APK डाऊनलोड लिंक उघडताना अडचण आली. कृपया डाऊनलोड पोर्टलवरून APK मिळवा.',
             style: GoogleFonts.mukta(),
           ),
           backgroundColor: Colors.red.shade700,
         ),
       );
     }
+  }
+
+  Future<void> _handleOpenPortal() async {
+    final service = ref.read(appUpdateServiceProvider);
+    await service.launchDownloadPortal();
   }
 
   @override
@@ -357,12 +362,12 @@ class _ForceUpdateScreenState extends ConsumerState<ForceUpdateScreen>
                     const SizedBox(height: 20),
                   ],
 
-                  // Update Now Button (Primary CTA)
+                  // Update Now Button (Primary CTA - Direct APK Download)
                   ElevatedButton.icon(
                     onPressed: _handleUpdateClick,
-                    icon: const Icon(Icons.download_rounded, size: 20),
+                    icon: const Icon(Icons.download_rounded, size: 22),
                     label: Text(
-                      isMr ? 'आता अपडेट करा (Update Now)' : 'Update Now',
+                      isMr ? 'नवीन APK थेट डाऊनलोड करा (Download APK)' : 'Download APK Update',
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.secondaryGreen,
@@ -381,20 +386,12 @@ class _ForceUpdateScreenState extends ConsumerState<ForceUpdateScreen>
 
                   const SizedBox(height: 10),
 
-                  // Recheck Status Button
+                  // Open Web Download Portal Button
                   OutlinedButton.icon(
-                    onPressed: _isChecking ? null : () => _recheckVersion(fromResume: false),
-                    icon: _isChecking
-                        ? const SizedBox(
-                            width: 14,
-                            height: 14,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Icon(Icons.refresh_rounded, size: 18),
+                    onPressed: _handleOpenPortal,
+                    icon: const Icon(Icons.open_in_browser_rounded, size: 18),
                     label: Text(
-                      _isChecking
-                          ? (isMr ? 'तपासत आहे...' : 'Checking...')
-                          : (isMr ? 'पुन्हा तपासा (Recheck Status)' : 'Recheck Status'),
+                      isMr ? 'अधिकृत डाऊनलोड पोर्टल उघडा (Web Portal)' : 'Open Web Download Portal',
                     ),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.primaryBlue,
@@ -410,13 +407,40 @@ class _ForceUpdateScreenState extends ConsumerState<ForceUpdateScreen>
                     ),
                   ),
 
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 10),
+
+                  // Recheck Status Button
+                  TextButton.icon(
+                    onPressed: _isChecking ? null : () => _recheckVersion(fromResume: false),
+                    icon: _isChecking
+                        ? const SizedBox(
+                            width: 14,
+                            height: 14,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.refresh_rounded, size: 18),
+                    label: Text(
+                      _isChecking
+                          ? (isMr ? 'तपासत आहे...' : 'Checking...')
+                          : (isMr ? 'इन्स्टॉल केल्यावर तपासा (Verify Installation)' : 'Verify Installation'),
+                    ),
+                    style: TextButton.styleFrom(
+                      foregroundColor: AppColors.textSecondary,
+                      minimumSize: const Size.fromHeight(42),
+                      textStyle: GoogleFonts.mukta(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 12),
 
                   // Help / Portal info
                   Text(
                     isMr
-                        ? 'प्ले स्टोअर उपलब्ध नसल्यास https://nardana-connect.vercel.app/download.html वरून अधिकृत APK डाऊनलोड करा.'
-                        : 'If Play Store is not available, download the official APK from https://nardana-connect.vercel.app/download.html.',
+                        ? 'टीप: वरील बटणावर क्लिक करताच नवीन APK डाऊनलोड सुरू होईल. डाऊनलोड झाल्यावर फाईलवर क्लिक करून ॲप इन्स्टॉल करा.'
+                        : 'Note: Tapping the button starts downloading the new APK. Once downloaded, tap the file to install.',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.mukta(
                       fontSize: 11,

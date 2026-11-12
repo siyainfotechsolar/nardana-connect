@@ -167,7 +167,7 @@ export const Services: React.FC = () => {
         actions={
           <button
             onClick={() => setIsModalOpen(true)}
-            className="flex items-center space-x-1.5 px-4 py-2 bg-brand-blue hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-sm transition"
+            className="flex items-center space-x-2 px-4 py-2.5 bg-brand-blue hover:bg-opacity-90 text-white rounded-xl text-xs font-semibold shadow-sm transition"
           >
             <Plus className="w-4 h-4" />
             <span>नवीन सेवा जोडा</span>
@@ -513,3 +513,4 @@ export const Services: React.FC = () => {
     </div>
   );
 };
+

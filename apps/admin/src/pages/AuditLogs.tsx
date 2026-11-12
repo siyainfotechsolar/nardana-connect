@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Download, Eye, X, ShieldCheck } from 'lucide-react';
+import { Search, Download } from 'lucide-react';
 import { useToast } from '../components/Toast';
 import { AdminPageHeader } from '../components/AdminPageHeader';
 
@@ -63,7 +63,6 @@ const INITIAL_AUDIT_LOGS: AuditLog[] = [
 
 export const AuditLogs: React.FC = () => {
   const [logs] = useState<AuditLog[]>(INITIAL_AUDIT_LOGS);
-  const [viewingLog, setViewingLog] = useState<AuditLog | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [actionFilter, setActionFilter] = useState('all');
   const { showToast } = useToast();
@@ -137,21 +136,15 @@ export const AuditLogs: React.FC = () => {
               <th className="px-5 py-3">मॉड्यूल</th>
               <th className="px-5 py-3">सविस्तर तपशील</th>
               <th className="px-5 py-3">आयपी पत्ता</th>
-              <th className="px-5 py-3 text-right">कृती</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 font-mono text-slate-700">
             {filtered.map((l) => (
-              <tr 
-                key={l.id} 
-                onClick={() => setViewingLog(l)}
-                className="hover:bg-blue-50/70 font-sans cursor-pointer group transition"
-                title="सविस्तर ऑडिट तपशील पाहण्यासाठी क्लिक करा"
-              >
+              <tr key={l.id} className="hover:bg-slate-50/70 font-sans">
                 <td className="px-5 py-3.5 text-slate-500 whitespace-nowrap text-xs">
                   {new Date(l.timestamp).toLocaleString('mr-IN')}
                 </td>
-                <td className="px-5 py-3.5 font-bold text-slate-800 font-mono text-xs group-hover:text-brand-blue">
+                <td className="px-5 py-3.5 font-bold text-slate-800 font-mono text-xs">
                   {l.admin_email}
                 </td>
                 <td className="px-5 py-3.5 whitespace-nowrap">
@@ -170,95 +163,13 @@ export const AuditLogs: React.FC = () => {
                   </span>
                 </td>
                 <td className="px-5 py-3.5 text-slate-800 font-semibold text-xs">{l.module}</td>
-                <td className="px-5 py-3.5 text-slate-600 text-xs max-w-md truncate">{l.details}</td>
+                <td className="px-5 py-3.5 text-slate-600 text-xs max-w-md">{l.details}</td>
                 <td className="px-5 py-3.5 font-mono text-slate-400 text-xs">{l.ip_address}</td>
-                <td className="px-5 py-3.5 text-right" onClick={(e) => e.stopPropagation()}>
-                  <button
-                    onClick={() => setViewingLog(l)}
-                    className="p-1 hover:text-brand-blue text-slate-400"
-                    title="तपशील पहा"
-                  >
-                    <Eye className="w-4 h-4" />
-                  </button>
-                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-
-      {/* Audit Log Details Modal */}
-      {viewingLog && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in">
-          <div className="bg-white rounded-2xl max-w-md w-full shadow-2xl overflow-hidden border border-slate-200">
-            <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="p-2 bg-blue-100 rounded-lg text-brand-blue">
-                  <ShieldCheck className="w-5 h-5" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-base text-slate-900 leading-tight">
-                    ऑडिट लॉग तपशील
-                  </h3>
-                  <p className="text-xs text-slate-500 font-mono">आयडी: {viewingLog.id}</p>
-                </div>
-              </div>
-              <button
-                onClick={() => setViewingLog(null)}
-                className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-200 transition"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="p-6 space-y-4 text-xs text-slate-700">
-              <div className="space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-200">
-                <div className="flex justify-between py-1 border-b border-slate-200">
-                  <span className="text-slate-500">ॲडमिन वापरकर्ता:</span>
-                  <span className="font-bold font-mono text-slate-800">{viewingLog.admin_email}</span>
-                </div>
-                <div className="flex justify-between py-1 border-b border-slate-200">
-                  <span className="text-slate-500">कृती प्रकार:</span>
-                  <span className="font-bold font-mono text-brand-blue">{viewingLog.action}</span>
-                </div>
-                <div className="flex justify-between py-1 border-b border-slate-200">
-                  <span className="text-slate-500">संबंधित विभाग:</span>
-                  <span className="font-bold text-slate-800">{viewingLog.module}</span>
-                </div>
-                <div className="flex justify-between py-1 border-b border-slate-200">
-                  <span className="text-slate-500">आयपी ॲड्रेस:</span>
-                  <span className="font-mono text-slate-600">{viewingLog.ip_address}</span>
-                </div>
-                <div className="flex justify-between py-1">
-                  <span className="text-slate-500">वेळ व दिनांक:</span>
-                  <span className="font-mono text-slate-700">
-                    {new Date(viewingLog.timestamp).toLocaleString('mr-IN', {
-                      dateStyle: 'full',
-                      timeStyle: 'medium',
-                    })}
-                  </span>
-                </div>
-              </div>
-
-              <div>
-                <label className="block font-semibold text-slate-700 mb-1">कृतीचा सविस्तर तपशील:</label>
-                <div className="p-3 bg-white rounded-lg border border-slate-200 text-slate-800 text-xs leading-relaxed font-sans">
-                  {viewingLog.details}
-                </div>
-              </div>
-            </div>
-
-            <div className="px-6 py-3.5 bg-slate-50 border-t border-slate-200 flex justify-end">
-              <button
-                onClick={() => setViewingLog(null)}
-                className="px-4 py-1.5 bg-slate-200 text-slate-700 rounded-lg hover:bg-slate-300 text-xs font-semibold"
-              >
-                बंद करा
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

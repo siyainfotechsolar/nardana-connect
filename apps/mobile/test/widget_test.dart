@@ -13,7 +13,7 @@ void main() {
     expect(find.text('नरडाणा कनेक्ट'), findsOneWidget);
     expect(find.text('NARDANA CONNECT'), findsOneWidget);
     expect(find.text('आपलं गाव, आपली डिजिटल ओळख!'), findsOneWidget);
-    expect(find.text('विकसित: सिया इन्फोटेक अँड सोलर एनर्जी'), findsOneWidget);
+    expect(find.text('विकसित: सिया इन्फोटेक (नरडाणा)'), findsOneWidget);
     expect(find.byType(Image), findsOneWidget);
 
     // Let the splash timer finish cleanly
