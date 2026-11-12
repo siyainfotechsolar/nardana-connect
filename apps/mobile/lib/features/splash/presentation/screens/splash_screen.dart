@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nardana_connect/core/constants/app_colors.dart';
+import 'package:nardana_connect/core/services/app_info_service.dart';
 import 'package:nardana_connect/features/app_update/services/app_update_service.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -13,10 +14,24 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  String _version = '';
+  String _buildNumber = '';
+
   @override
   void initState() {
     super.initState();
+    _loadVersion();
     _checkNextScreen();
+  }
+
+  Future<void> _loadVersion() async {
+    final info = await AppInfoService.instance.getPackageInfo();
+    if (mounted) {
+      setState(() {
+        _version = info.version;
+        _buildNumber = info.buildNumber;
+      });
+    }
   }
 
   Future<void> _checkNextScreen() async {
@@ -158,6 +173,25 @@ class _SplashScreenState extends State<SplashScreen> {
                 letterSpacing: 0.5,
               ),
             ),
+            if (_version.isNotEmpty) ...[
+              const SizedBox(height: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  'Version $_version • Build $_buildNumber • Android',
+                  style: GoogleFonts.mukta(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white.withValues(alpha: 0.95),
+                    letterSpacing: 0.4,
+                  ),
+                ),
+              ),
+            ],
           ],
         ),
       ),

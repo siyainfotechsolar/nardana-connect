@@ -19,6 +19,8 @@ import 'package:nardana_connect/features/notices/presentation/screens/notice_det
 import 'package:nardana_connect/features/notices/presentation/screens/pdf_viewer_screen.dart';
 import 'package:nardana_connect/features/profile/presentation/screens/favorites_screen.dart';
 import 'package:nardana_connect/features/profile/presentation/screens/settings_screen.dart';
+import 'package:nardana_connect/features/profile/presentation/screens/about_app_screen.dart';
+import 'package:nardana_connect/features/profile/presentation/screens/notification_settings_screen.dart';
 import 'package:nardana_connect/features/election/presentation/screens/election_screen.dart';
 import 'package:nardana_connect/features/election/presentation/screens/candidate_detail_screen.dart';
 import 'package:nardana_connect/features/advertisements/models/advertisement_model.dart';
@@ -26,6 +28,11 @@ import 'package:nardana_connect/features/advertisements/presentation/screens/adv
 import 'package:nardana_connect/features/app_update/models/app_update_config_model.dart';
 import 'package:nardana_connect/features/app_update/presentation/screens/force_update_screen.dart';
 import 'package:nardana_connect/features/app_update/presentation/screens/maintenance_screen.dart';
+import 'package:nardana_connect/features/vehicles/models/vehicle_listing_model.dart';
+import 'package:nardana_connect/features/vehicles/presentation/screens/vehicle_rental_screen.dart';
+import 'package:nardana_connect/features/vehicles/presentation/screens/vehicle_detail_screen.dart';
+import 'package:nardana_connect/features/vehicles/presentation/screens/submit_vehicle_screen.dart';
+import 'package:nardana_connect/features/legal/presentation/screens/disclaimer_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -174,6 +181,36 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/settings',
       builder: (context, state) => const SettingsScreen(),
+    ),
+    GoRoute(
+      path: '/about',
+      builder: (context, state) => const AboutAppScreen(),
+    ),
+    GoRoute(
+      path: '/notification-settings',
+      builder: (context, state) => const NotificationSettingsScreen(),
+    ),
+    GoRoute(
+      path: '/vehicles',
+      builder: (context, state) {
+        final cat = state.extra as String?;
+        return VehicleRentalScreen(initialCategory: cat);
+      },
+    ),
+    GoRoute(
+      path: '/vehicle-detail',
+      builder: (context, state) {
+        final vehicle = state.extra as VehicleListingModel;
+        return VehicleDetailScreen(vehicle: vehicle);
+      },
+    ),
+    GoRoute(
+      path: '/vehicle-submit',
+      builder: (context, state) => const SubmitVehicleScreen(),
+    ),
+    GoRoute(
+      path: '/disclaimer',
+      builder: (context, state) => const DisclaimerScreen(),
     ),
   ],
 );

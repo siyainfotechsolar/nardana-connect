@@ -568,7 +568,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
                     icon: Icons.agriculture_rounded,
                     title: 'ट्रॅक्टर भाड्याने',
                     color: Colors.teal,
-                    onTap: () => context.push('/explore', extra: {'category': 'ट्रॅक्टर भाड्याने', 'group': 'agriculture'}),
+                    onTap: () => context.push('/vehicles', extra: 'tractor'),
                   ),
                   _buildCategoryItem(
                     icon: Icons.print_rounded,
@@ -578,9 +578,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
                   ),
                   _buildCategoryItem(
                     icon: Icons.local_taxi_rounded,
-                    title: 'ऑटो / टॅक्सी',
+                    title: 'गाडी / टॅक्सी',
                     color: Colors.deepOrange,
-                    onTap: () => context.push('/explore', extra: {'category': 'ऑटो / टॅक्सी', 'group': 'transport'}),
+                    onTap: () => context.push('/vehicles', extra: 'all'),
                   ),
                   _buildCategoryItem(
                     icon: Icons.restaurant_rounded,
@@ -733,6 +733,98 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
             ),
 
             const SizedBox(height: 14),
+
+            // Vehicle Rental Section (गाडी भाड्याने मिळेल - Nardana Special)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      const Icon(Icons.car_rental_rounded, size: 20, color: AppColors.primaryBlue),
+                      const SizedBox(width: 6),
+                      Text(
+                        'गाडी भाड्याने मिळेल',
+                        style: GoogleFonts.mukta(
+                          fontSize: 17,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  InkWell(
+                    onTap: () => context.push('/vehicles'),
+                    child: Text(
+                      l10n.translate('view_all'),
+                      style: GoogleFonts.mukta(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.primaryBlue,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+
+            // Vehicle Quick Slider
+            SizedBox(
+              height: 130,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                children: [
+                  _buildVehicleQuickCard(
+                    context,
+                    title: 'अर्टिगा (७ सीटर)',
+                    desc: 'कौटुंबिक प्रवास / AC',
+                    driver: 'कैलास पाटील (९४२१८८९९०१)',
+                    status: 'उपलब्ध',
+                    icon: Icons.airport_shuttle_rounded,
+                    color: Colors.blue.shade700,
+                    onTap: () => context.push('/vehicles', extra: 'ertiga'),
+                  ),
+                  const SizedBox(width: 12),
+                  _buildVehicleQuickCard(
+                    context,
+                    title: 'पिकअप / छोटा हत्ती',
+                    desc: '१.५ टन मालवाहतूक',
+                    driver: 'सचिन माळी (९८२३०१२३४४)',
+                    status: 'उपलब्ध',
+                    icon: Icons.local_shipping_rounded,
+                    color: Colors.deepOrange.shade700,
+                    onTap: () => context.push('/vehicles', extra: 'pickup'),
+                  ),
+                  const SizedBox(width: 12),
+                  _buildVehicleQuickCard(
+                    context,
+                    title: 'महिंद्रा ट्रॅक्टर',
+                    desc: 'रोटाव्हेटर / नांगरणी',
+                    driver: 'दिनेश चौधरी (९७६५४३२१०१)',
+                    status: 'उपलब्ध',
+                    icon: Icons.agriculture_rounded,
+                    color: Colors.teal.shade700,
+                    onTap: () => context.push('/vehicles', extra: 'tractor'),
+                  ),
+                  const SizedBox(width: 12),
+                  _buildVehicleQuickCard(
+                    context,
+                    title: 'जेसीबी (JCB 3DX)',
+                    desc: 'खोदकाम व सपाटीकरण',
+                    driver: 'अमोल सूर्यवंशी (९८२२३३४४५६)',
+                    status: 'उपलब्ध',
+                    icon: Icons.construction_rounded,
+                    color: Colors.amber.shade900,
+                    onTap: () => context.push('/vehicles', extra: 'jcb'),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 16),
 
             // Jobs and Marketplace Banner Cards
             Padding(
@@ -1055,6 +1147,107 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with WidgetsBindingObse
                     fontWeight: FontWeight.bold,
                     color: AppColors.primaryBlue,
                   ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildVehicleQuickCard(
+    BuildContext context, {
+    required String title,
+    required String desc,
+    required String driver,
+    required String status,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: Container(
+        width: 190,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: AppColors.border),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.03),
+              blurRadius: 6,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CircleAvatar(
+                  radius: 15,
+                  backgroundColor: color.withValues(alpha: 0.12),
+                  child: Icon(icon, size: 16, color: color),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFDCFCE7),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    status,
+                    style: GoogleFonts.mukta(
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                      color: const Color(0xFF15803D),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const Spacer(),
+            Text(
+              title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.mukta(
+                fontSize: 13.5,
+                fontWeight: FontWeight.bold,
+                color: AppColors.textPrimary,
+                height: 1.2,
+              ),
+            ),
+            Text(
+              desc,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: GoogleFonts.mukta(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: AppColors.secondaryGreen,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    driver,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.mukta(fontSize: 10.5, color: AppColors.textSecondary),
+                  ),
+                ),
+                Text(
+                  'कॉल →',
+                  style: GoogleFonts.mukta(fontSize: 10.5, fontWeight: FontWeight.bold, color: AppColors.primaryBlue),
                 ),
               ],
             ),

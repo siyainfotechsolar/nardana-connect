@@ -424,6 +424,64 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             ? const Center(child: CircularProgressIndicator())
             : Column(
                 children: [
+                  // Vehicle Rental banner (गाडी भाड्याने मिळेल - Nardana Special)
+                  Container(
+                    margin: const EdgeInsets.fromLTRB(16, 10, 16, 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [AppColors.primaryBlue, Color(0xFF1E3A8A)],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primaryBlue.withValues(alpha: 0.25),
+                          blurRadius: 6,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: InkWell(
+                      onTap: () => context.push('/vehicles'),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.15),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: const Icon(Icons.car_rental_rounded, color: Colors.white, size: 24),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'गाडी भाड्याने हवी आहे का? (वाहने व ड्रायव्हर्स)',
+                                  style: GoogleFonts.mukta(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                Text(
+                                  'कार, टॅक्सी, अर्टिगा, पिकअप, ट्रॅक्टर, जेसीबी थेट नरडाणा चालक',
+                                  style: GoogleFonts.mukta(
+                                    fontSize: 11,
+                                    color: AppColors.accentYellow,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(Icons.arrow_forward_ios_rounded, color: Colors.white70, size: 14),
+                        ],
+                      ),
+                    ),
+                  ),
+
                   // Active filter notification banner
                   if (isCategoryActive)
                     Container(

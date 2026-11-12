@@ -3,15 +3,56 @@ import 'dart:developer' as developer;
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nardana_connect/core/constants/app_colors.dart';
+import 'package:nardana_connect/core/router/app_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'supabase_service.dart';
+
+final FlutterLocalNotificationsPlugin _localNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+const String kNotificationChannelId = 'nardana_connect_alerts';
+const String kNotificationChannelName = 'NARDANA CONNECT Notifications';
+const String kNotificationChannelDesc = 'महत्वाच्या गाव सूचना, पाणी पुरवठा व आपत्कालीन संदेश';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   developer.log('Background FCM message received: ${message.messageId}');
+
+  // If data-only message (message.notification is null), show local notification
+  // so it reliably wakes the lock-screen. If notification payload is present,
+  // Android system displays it automatically on nardana_connect_alerts channel (avoids duplicates).
+  if (message.notification == null && message.data.isNotEmpty) {
+    final title = message.data['title'] ?? 'NARDANA CONNECT';
+    final body = message.data['body'] ?? 'नवीन गाव सूचना उपलब्ध आहे.';
+    final id = message.messageId.hashCode;
+
+    final androidDetails = AndroidNotificationDetails(
+      kNotificationChannelId,
+      kNotificationChannelName,
+      channelDescription: kNotificationChannelDesc,
+      importance: Importance.max,
+      priority: Priority.high,
+      visibility: NotificationVisibility.public,
+      enableVibration: true,
+      enableLights: true,
+      icon: '@mipmap/ic_launcher',
+      color: AppColors.primaryBlue,
+      playSound: true,
+      styleInformation: BigTextStyleInformation(body),
+    );
+
+    await _localNotificationsPlugin.show(
+      id,
+      title,
+      body,
+      NotificationDetails(android: androidDetails),
+      payload: message.data['route'] ?? '/notices',
+    );
+  }
 }
 
 class NotificationService {
@@ -34,9 +75,12 @@ class NotificationService {
       await Firebase.initializeApp();
       FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
+      // 1. Initialize Local Notifications Plugin with Lock Screen Channel
+      await _initializeLocalNotifications();
+
       final messaging = FirebaseMessaging.instance;
 
-      // 1. Request notification permissions (required on Android 13+)
+      // 2. Request notification permissions (required on Android 13+)
       final settings = await messaging.requestPermission(
         alert: true,
         announcement: false,
@@ -49,14 +93,20 @@ class NotificationService {
 
       developer.log('FCM Notification permission status: ${settings.authorizationStatus}');
 
-      // 2. Set presentation options for foreground display
+      // Request local notification permission on Android 13+
+      await _localNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.requestNotificationsPermission();
+
+      // 3. Set presentation options for foreground display
       await messaging.setForegroundNotificationPresentationOptions(
         alert: true,
         badge: true,
         sound: true,
       );
 
-      // 3. Get FCM Token & save to database
+      // 4. Get FCM Token & save to database
       // ignore: deprecated_member_use
       _fcmToken = await messaging.getToken();
       developer.log('FCM Registration Token: $_fcmToken');
@@ -64,7 +114,7 @@ class NotificationService {
         await _saveTokenToSupabase(_fcmToken!);
       }
 
-      // 4. Listen for token refreshes
+      // 5. Listen for token refreshes
       // ignore: deprecated_member_use
       messaging.onTokenRefresh.listen((newToken) async {
         _fcmToken = newToken;
@@ -72,18 +122,28 @@ class NotificationService {
         await _saveTokenToSupabase(newToken);
       });
 
-      // 5. Subscribe to Nardana village topics
+      // 6. Subscribe to Nardana village topics
       await messaging.subscribeToTopic('nardana_community');
       await messaging.subscribeToTopic('emergency_alerts');
       await messaging.subscribeToTopic('village_nardana');
 
-      // 6. Handle foreground notifications
+      // 7. Handle foreground notifications: Show high-priority lock-screen capable banner
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
         developer.log('Foreground FCM notification: ${message.notification?.title} - ${message.notification?.body}');
-        final title = message.notification?.title ?? message.data['title'] ?? 'नरडाणा सूचना';
+        final title = message.notification?.title ?? message.data['title'] ?? 'NARDANA CONNECT';
         final body = message.notification?.body ?? message.data['body'] ?? '';
         final type = message.data['type'] ?? 'announcement';
 
+        // Trigger local notification so it appears in notification shade & lock screen
+        showLocalNotification(
+          id: message.messageId.hashCode,
+          title: title,
+          body: body,
+          payload: message.data['route'] ?? '/notices',
+          type: type,
+        );
+
+        // Also broadcast to in-app stream for immediate UI banner
         _notificationStreamController.add({
           'title': title,
           'body': body,
@@ -93,18 +153,115 @@ class NotificationService {
         });
       });
 
-      // 7. Handle notification tapped by user
+      // 8. Handle notification tapped by user when app is in background
       FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-        developer.log('Notification tapped: ${message.data}');
+        developer.log('Notification tapped from background: ${message.data}');
+        final route = message.data['route'] ?? '/notices';
+        appRouter.push(route);
       });
 
-      // 8. Start Supabase Realtime Notification Listener
+      // 9. Check if app was launched by tapping a notification (terminated state)
+      final initialMessage = await messaging.getInitialMessage();
+      if (initialMessage != null) {
+        developer.log('App launched from terminated state via notification: ${initialMessage.data}');
+        final route = initialMessage.data['route'] ?? '/notices';
+        Future.delayed(const Duration(milliseconds: 600), () {
+          appRouter.push(route);
+        });
+      }
+
+      // 10. Start Supabase Realtime Notification Listener
       _listenToSupabaseRealtime();
 
       _initialized = true;
     } catch (e, stack) {
       developer.log('Error initializing Firebase Messaging: $e', error: e, stackTrace: stack);
     }
+  }
+
+  /// Sets up Flutter Local Notifications and Android Notification Channel
+  Future<void> _initializeLocalNotifications() async {
+    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const initSettings = InitializationSettings(android: androidSettings);
+
+    await _localNotificationsPlugin.initialize(
+      initSettings,
+      onDidReceiveNotificationResponse: (NotificationResponse response) {
+        developer.log('Local notification tapped, payload: ${response.payload}');
+        final route = response.payload ?? '/notices';
+        appRouter.push(route);
+      },
+    );
+
+    // Create high-priority lock-screen channel
+    final androidChannel = AndroidNotificationChannel(
+      kNotificationChannelId,
+      kNotificationChannelName,
+      description: kNotificationChannelDesc,
+      importance: Importance.max,
+      playSound: true,
+      enableVibration: true,
+      enableLights: true,
+      showBadge: true,
+    );
+
+    await _localNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.createNotificationChannel(androidChannel);
+  }
+
+  /// Shows a local notification with Lock Screen visibility (VISIBILITY_PUBLIC)
+  Future<void> showLocalNotification({
+    int? id,
+    required String title,
+    required String body,
+    String? payload,
+    String? type,
+  }) async {
+    final notifId = id ?? DateTime.now().millisecondsSinceEpoch ~/ 1000;
+
+    final androidDetails = AndroidNotificationDetails(
+      kNotificationChannelId,
+      kNotificationChannelName,
+      channelDescription: kNotificationChannelDesc,
+      importance: Importance.max,
+      priority: Priority.high,
+      visibility: NotificationVisibility.public, // Visible on Lock Screen!
+      enableVibration: true,
+      enableLights: true,
+      icon: '@mipmap/ic_launcher',
+      color: AppColors.primaryBlue,
+      playSound: true,
+      styleInformation: BigTextStyleInformation(
+        body,
+        contentTitle: title,
+        summaryText: 'NARDANA CONNECT',
+      ),
+      ticker: 'NARDANA CONNECT',
+    );
+
+    await _localNotificationsPlugin.show(
+      notifId,
+      title,
+      body,
+      NotificationDetails(android: androidDetails),
+      payload: payload ?? '/notices',
+    );
+  }
+
+  /// Triggers a test lock-screen notification after a 3-second delay
+  Future<void> triggerLockScreenTestNotification({
+    required String title,
+    required String body,
+  }) async {
+    await Future.delayed(const Duration(seconds: 3));
+    await showLocalNotification(
+      id: 9999,
+      title: title,
+      body: body,
+      payload: '/notices',
+    );
   }
 
   /// Saves or updates the device FCM token in Supabase
@@ -140,11 +297,24 @@ class NotificationService {
             callback: (payload) {
               final newRecord = payload.newRecord;
               developer.log('Supabase Realtime notification received: $newRecord');
+              final title = newRecord['title_mr'] ?? newRecord['title_en'] ?? 'गाव सूचना';
+              final body = newRecord['body_mr'] ?? newRecord['body_en'] ?? '';
+              final type = newRecord['type'] ?? 'announcement';
+
+              // Show local notification for Realtime events so it lights up lock screen
+              showLocalNotification(
+                id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
+                title: title,
+                body: body,
+                payload: '/notices',
+                type: type,
+              );
+
               _notificationStreamController.add({
                 'id': newRecord['id'],
-                'title': newRecord['title_mr'] ?? newRecord['title_en'] ?? 'गाव सूचना',
-                'body': newRecord['body_mr'] ?? newRecord['body_en'] ?? '',
-                'type': newRecord['type'] ?? 'announcement',
+                'title': title,
+                'body': body,
+                'type': type,
                 'source': 'realtime',
                 'received_at': DateTime.now().toIso8601String(),
               });

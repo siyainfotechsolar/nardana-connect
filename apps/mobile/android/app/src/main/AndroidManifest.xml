@@ -1,6 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <application
         android:label="Nardana Connect"
@@ -37,7 +40,7 @@
         <!-- Firebase Cloud Messaging Notification Channel & Icon -->
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
-            android:value="nardana_alerts_channel" />
+            android:value="nardana_connect_alerts" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@mipmap/ic_launcher" />

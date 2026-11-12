@@ -100,6 +100,29 @@ class OptionalUpdateDialog extends ConsumerWidget {
                 height: 1.4,
               ),
             ),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: Colors.blue.shade100),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    isMr ? 'सध्याचे: v$installedVersion ($installedBuildNumber)' : 'Current: v$installedVersion ($installedBuildNumber)',
+                    style: GoogleFonts.mukta(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.textSecondary),
+                  ),
+                  const Icon(Icons.arrow_forward_rounded, size: 14, color: AppColors.primaryBlue),
+                  Text(
+                    isMr ? 'नवीन: v${config.latestVersion} (${config.latestBuildNumber})' : 'Latest: v${config.latestVersion} (${config.latestBuildNumber})',
+                    style: GoogleFonts.mukta(fontSize: 11, fontWeight: FontWeight.bold, color: AppColors.secondaryGreen),
+                  ),
+                ],
+              ),
+            ),
             if (releaseNotes.trim().isNotEmpty) ...[
               const SizedBox(height: 12),
               Container(

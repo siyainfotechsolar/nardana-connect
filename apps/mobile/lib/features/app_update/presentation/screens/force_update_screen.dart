@@ -212,9 +212,21 @@ class _ForceUpdateScreenState extends ConsumerState<ForceUpdateScreen>
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: Colors.grey.shade200),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    child: Column(
                       children: [
+                        Text(
+                          'NARDANA CONNECT • Platform: Android',
+                          style: GoogleFonts.mukta(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primaryBlue,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
                         Column(
                           children: [
                             Text(
@@ -274,6 +286,8 @@ class _ForceUpdateScreenState extends ConsumerState<ForceUpdateScreen>
                             ),
                           ],
                         ),
+                      ],
+                    ),
                       ],
                     ),
                   ),

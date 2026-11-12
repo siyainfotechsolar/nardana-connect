@@ -222,6 +222,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                         ),
                         const Divider(height: 1),
                         ListTile(
+                          leading: const Icon(Icons.info_outline_rounded, color: AppColors.primaryBlue),
+                          title: Text('ॲप माहिती व आवृत्ती (About App)', style: GoogleFonts.mukta(fontWeight: FontWeight.w600)),
+                          subtitle: Text('NARDANA CONNECT • Version Details', style: GoogleFonts.mukta(fontSize: 12, color: AppColors.textSecondary)),
+                          trailing: const Icon(Icons.chevron_right_rounded),
+                          onTap: () => context.push('/about'),
+                        ),
+                        const Divider(height: 1),
+                        ListTile(
                           leading: const Icon(Icons.privacy_tip_outlined, color: AppColors.primaryBlue),
                           title: Text('गोपनीयता धोरण (Privacy Policy)', style: GoogleFonts.mukta(fontWeight: FontWeight.w600)),
                           trailing: const Icon(Icons.chevron_right_rounded),
@@ -239,6 +247,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                             'नियम व अटी (Terms & Conditions)',
                             '१. हे ॲप केवळ नरडाणा गावासाठी मर्यादित आहे.\n२. नागरिकांनी दिलेली माहिती खरी असणे आवश्यक आहे.\n३. आक्षेपार्ह, दिशाभूल करणारी अथवा बेकायदेशीर माहिती त्वरित काढून टाकण्यात येईल.\n४. कोणत्याही आर्थिक व्यवहाराची पडताळणी नागरिकांनी स्वतः प्रत्यक्ष खात्री करूनच करावी.',
                           ),
+                        ),
+                        const Divider(height: 1),
+                        ListTile(
+                          leading: const Icon(Icons.gavel_rounded, color: AppColors.primaryBlue),
+                          title: Text('कायदेशीर अस्वीकरण (Disclaimer)', style: GoogleFonts.mukta(fontWeight: FontWeight.w600)),
+                          subtitle: Text('१४ कलमे • अधिकृत आवृत्ती १.०.० (मराठी व English)', style: GoogleFonts.mukta(fontSize: 12, color: AppColors.textSecondary)),
+                          trailing: const Icon(Icons.chevron_right_rounded),
+                          onTap: () => context.push('/disclaimer'),
                         ),
                         const Divider(height: 1),
                         ListTile(

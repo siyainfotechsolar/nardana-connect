@@ -19,7 +19,9 @@ import {
   Settings, 
   Smartphone, 
   BarChart3, 
-  ShieldCheck 
+  ShieldCheck,
+  Car,
+  Gavel 
 } from 'lucide-react';
 
 export const navItems = [
@@ -28,20 +30,22 @@ export const navItems = [
   { to: '/categories', label: '३. कॅटेगरी (Categories)', icon: Layers },
   { to: '/businesses', label: '४. व्यवसाय (Businesses)', icon: Store },
   { to: '/services', label: '५. सेवा (Services)', icon: Wrench },
-  { to: '/jobs', label: '६. रोजगार (Jobs)', icon: Briefcase },
-  { to: '/marketplace', label: '७. खरेदी - विक्री (Buy & Sell)', icon: ShoppingBag },
-  { to: '/notices', label: '८. गाव सूचना (Notices)', icon: Bell },
-  { to: '/emergency-contacts', label: '९. तातडीचे संपर्क (Emergency)', icon: PhoneCall },
-  { to: '/advertisements', label: '१०. जाहिराती (Advertisements)', icon: Megaphone },
-  { to: '/election', label: '११. निवडणूक (Election)', icon: Vote },
-  { to: '/complaints', label: '१२. तक्रारी (Complaints)', icon: AlertCircle },
-  { to: '/reviews', label: '१३. अभिप्राय (Reviews)', icon: MessageSquareQuote },
-  { to: '/notifications', label: '१४. नोटिफिकेशन्स (Push Alerts)', icon: Send },
-  { to: '/home-layout', label: '१५. होम लेआउट (Home Layout)', icon: LayoutGrid },
-  { to: '/settings', label: '१६. ॲप सेटिंग्ज (Settings)', icon: Settings },
-  { to: '/app-update', label: '१७. ॲप अपडेट (App Update)', icon: Smartphone },
-  { to: '/reports', label: '१८. अहवाल (Reports)', icon: BarChart3 },
-  { to: '/audit-logs', label: '१९. ऑडिट लॉग (Audit Logs)', icon: ShieldCheck },
+  { to: '/vehicles', label: '६. गाडी भाड्याने (Vehicle Rental)', icon: Car },
+  { to: '/jobs', label: '७. रोजगार (Jobs)', icon: Briefcase },
+  { to: '/marketplace', label: '८. खरेदी - विक्री (Buy & Sell)', icon: ShoppingBag },
+  { to: '/notices', label: '९. गाव सूचना (Notices)', icon: Bell },
+  { to: '/emergency-contacts', label: '१०. तातडीचे संपर्क (Emergency)', icon: PhoneCall },
+  { to: '/advertisements', label: '११. जाहिराती (Advertisements)', icon: Megaphone },
+  { to: '/election', label: '१२. निवडणूक (Election)', icon: Vote },
+  { to: '/complaints', label: '१३. तक्रारी (Complaints)', icon: AlertCircle },
+  { to: '/reviews', label: '१४. अभिप्राय (Reviews)', icon: MessageSquareQuote },
+  { to: '/notifications', label: '१५. नोटिफिकेशन्स (Push Alerts)', icon: Send },
+  { to: '/home-layout', label: '१६. होम लेआउट (Home Layout)', icon: LayoutGrid },
+  { to: '/disclaimer', label: '१७. कायदेशीर अस्वीकरण (Disclaimer)', icon: Gavel },
+  { to: '/settings', label: '१८. ॲप सेटिंग्ज (Settings)', icon: Settings },
+  { to: '/app-update', label: '१९. ॲप अपडेट (App Update)', icon: Smartphone },
+  { to: '/reports', label: '२०. अहवाल (Reports)', icon: BarChart3 },
+  { to: '/audit-logs', label: '२१. ऑडिट लॉग (Audit Logs)', icon: ShieldCheck },
 ];
 
 export const Sidebar: React.FC = () => {
@@ -56,7 +60,7 @@ export const Sidebar: React.FC = () => {
         />
         <div className="min-w-0">
           <h1 className="font-bold text-base leading-tight tracking-wide truncate">नरडाणा कनेक्ट</h1>
-          <p className="text-[11px] text-brand-yellow font-medium truncate">Nardana Admin (19 Modules)</p>
+          <p className="text-[11px] text-brand-yellow font-medium truncate">Nardana Admin (21 Modules)</p>
         </div>
       </div>
 

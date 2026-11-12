@@ -28,6 +28,8 @@ import { Settings } from './pages/Settings';
 import { AppUpdate } from './pages/AppUpdate';
 import { Reports } from './pages/Reports';
 import { AuditLogs } from './pages/AuditLogs';
+import { Vehicles } from './pages/Vehicles';
+import { DisclaimerManager } from './pages/DisclaimerManager';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -75,6 +77,8 @@ export const App: React.FC = () => {
                 <Route path="home-layout" element={<HomeLayout />} />
                 <Route path="reports" element={<Reports />} />
                 <Route path="audit-logs" element={<AuditLogs />} />
+                <Route path="vehicles" element={<Vehicles />} />
+                <Route path="disclaimer" element={<DisclaimerManager />} />
                 <Route path="app-update" element={<AppUpdate />} />
                 <Route path="settings" element={<Settings />} />
               </Route>
