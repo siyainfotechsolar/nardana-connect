@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:nardana_connect/core/constants/app_colors.dart';
 import 'package:nardana_connect/core/localization/app_localizations.dart';
 import 'package:nardana_connect/core/localization/locale_provider.dart';
 import 'package:nardana_connect/core/navigation/back_button_handler.dart';
+import 'package:nardana_connect/core/services/notification_service.dart';
 import 'package:nardana_connect/features/home/presentation/screens/home_screen.dart';
 import 'package:nardana_connect/features/explore/presentation/screens/explore_screen.dart';
 import 'package:nardana_connect/features/post/presentation/screens/post_screen.dart';
@@ -19,6 +21,7 @@ class MainShellScreen extends ConsumerStatefulWidget {
 
 class _MainShellScreenState extends ConsumerState<MainShellScreen> {
   int _currentIndex = 0;
+  StreamSubscription? _notifSub;
 
   final List<Widget> _screens = const [
     HomeScreen(),
@@ -27,6 +30,26 @@ class _MainShellScreenState extends ConsumerState<MainShellScreen> {
     NoticesScreen(),
     ProfileScreen(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _notifSub = NotificationService.instance.onNotificationReceived.listen((data) {
+      if (!mounted) return;
+      NotificationService.instance.showNotificationBanner(
+        context,
+        title: data['title'] ?? 'गाव सूचना',
+        body: data['body'] ?? '',
+        type: data['type'],
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _notifSub?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
