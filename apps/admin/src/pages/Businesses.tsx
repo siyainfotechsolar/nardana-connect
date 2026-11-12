@@ -15,7 +15,12 @@ import {
   MapPin, 
   Eye, 
   Clock,
-  X 
+  X,
+  Crosshair,
+  ExternalLink,
+  AlertTriangle,
+  Compass,
+  Navigation
 } from 'lucide-react';
 import { useToast } from '../components/Toast';
 
@@ -31,6 +36,11 @@ interface BusinessFormData {
   description: string;
   opening_hours: string;
   status: 'pending' | 'approved' | 'rejected';
+  latitude: number | null;
+  longitude: number | null;
+  location_accuracy_meters: number | null;
+  location_captured_at: string | null;
+  location_confirmed: boolean;
 }
 
 const defaultFormData: BusinessFormData = {
@@ -45,6 +55,11 @@ const defaultFormData: BusinessFormData = {
   description: '',
   opening_hours: 'सकाळी ९:०० ते रात्री ८:००',
   status: 'approved',
+  latitude: null,
+  longitude: null,
+  location_accuracy_meters: null,
+  location_captured_at: null,
+  location_confirmed: false,
 };
 
 export const Businesses: React.FC = () => {
@@ -63,6 +78,7 @@ export const Businesses: React.FC = () => {
   const [editingBusiness, setEditingBusiness] = useState<Business | null>(null);
   const [formData, setFormData] = useState<BusinessFormData>(defaultFormData);
   const [submitting, setSubmitting] = useState(false);
+  const [capturingLocation, setCapturingLocation] = useState(false);
 
   const { showToast } = useToast();
 
@@ -126,9 +142,68 @@ export const Businesses: React.FC = () => {
       description: b.description || '',
       opening_hours: (b as any).opening_hours || 'सकाळी ९:०० ते रात्री ८:००',
       status: b.status,
+      latitude: b.latitude ?? null,
+      longitude: b.longitude ?? null,
+      location_accuracy_meters: b.location_accuracy_meters ?? null,
+      location_captured_at: b.location_captured_at ?? null,
+      location_confirmed: b.latitude !== null && b.latitude !== undefined,
     });
     setIsModalOpen(true);
   }
+
+  const handleCaptureLocation = () => {
+    if (!navigator.geolocation) {
+      showToast('ब्राउझरमध्ये GPS जिओलोकेशन सपोर्ट उपलब्ध नाही.', 'error');
+      return;
+    }
+    setCapturingLocation(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = parseFloat(pos.coords.latitude.toFixed(6));
+        const lng = parseFloat(pos.coords.longitude.toFixed(6));
+        const acc = Math.round(pos.coords.accuracy);
+        const now = new Date().toISOString();
+        setFormData(prev => ({
+          ...prev,
+          latitude: lat,
+          longitude: lng,
+          location_accuracy_meters: acc,
+          location_captured_at: now,
+          location_confirmed: true,
+        }));
+        setCapturingLocation(false);
+        showToast(
+          `📍 GPS लोकेशन प्राप्त! (${lat}, ${lng}) - अचूकता: ±${acc} मीटर`,
+          acc > 80 ? 'info' : 'success'
+        );
+      },
+      (err) => {
+        setCapturingLocation(false);
+        let msg = 'GPS लोकेशन मिळवता आले नाही.';
+        if (err.code === 1) msg = 'GPS परवानगी नाकारली गेली आहे. कृपया ब्राउझरमध्ये लोकेशन अनुमती द्या.';
+        else if (err.code === 2) msg = 'GPS स्थान उपलब्ध नाही. कृपया फोनचे लोकेशन/GPS सुरू असल्याची खात्री करा.';
+        else if (err.code === 3) msg = 'GPS शोधताना वेळ संपली (Timeout). पुन्हा प्रयत्न करा.';
+        showToast(msg, 'error');
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 15000,
+        maximumAge: 0,
+      }
+    );
+  };
+
+  const handleClearLocation = () => {
+    setFormData(prev => ({
+      ...prev,
+      latitude: null,
+      longitude: null,
+      location_accuracy_meters: null,
+      location_captured_at: null,
+      location_confirmed: false,
+    }));
+    showToast('GPS लोकेशन हटवले.', 'info');
+  };
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -137,8 +212,16 @@ export const Businesses: React.FC = () => {
       return;
     }
 
+    if (formData.latitude !== null && !formData.location_confirmed) {
+      showToast('कृपया प्रत्यक्ष उपस्थिती व अचूकतेची पुष्टी (Confirmation Checkbox) निवडा.', 'error');
+      return;
+    }
+
     try {
       setSubmitting(true);
+      const isGpsValid = formData.latitude !== null && formData.longitude !== null;
+      const now = new Date().toISOString();
+
       if (editingBusiness) {
         const { error } = await supabase
           .from('businesses')
@@ -154,12 +237,18 @@ export const Businesses: React.FC = () => {
             description: formData.description.trim(),
             opening_hours: formData.opening_hours.trim(),
             status: formData.status,
-            updated_at: new Date().toISOString(),
+            latitude: formData.latitude,
+            longitude: formData.longitude,
+            location_accuracy_meters: formData.location_accuracy_meters,
+            location_captured_at: formData.location_captured_at,
+            location_verified_by: isGpsValid ? 'Admin' : null,
+            location_verified_at: isGpsValid ? now : null,
+            updated_at: now,
           })
           .eq('id', editingBusiness.id);
 
         if (error) throw error;
-        showToast('व्यवसायाची माहिती यशस्वीपणे अपडेट झाली!', 'success');
+        showToast('व्यवसायाची माहिती व GPS लोकेशन यशस्वीपणे अपडेट झाले!', 'success');
       } else {
         const { error } = await supabase
           .from('businesses')
@@ -176,6 +265,12 @@ export const Businesses: React.FC = () => {
             opening_hours: formData.opening_hours.trim(),
             status: formData.status,
             photos: [],
+            latitude: formData.latitude,
+            longitude: formData.longitude,
+            location_accuracy_meters: formData.location_accuracy_meters,
+            location_captured_at: formData.location_captured_at,
+            location_verified_by: isGpsValid ? 'Admin' : null,
+            location_verified_at: isGpsValid ? now : null,
           });
 
         if (error) throw error;
@@ -413,6 +508,17 @@ export const Businesses: React.FC = () => {
                         <MapPin className="w-3 h-3 text-brand-green" /> {getVillageName(b.village_id)}
                       </p>
                       <p className="text-[11px] text-slate-500">{getCategoryName(b.category_id)}</p>
+                      {b.latitude && b.longitude ? (
+                        <div className="flex items-center gap-1 text-[10px] text-emerald-700 font-semibold mt-1">
+                          <Crosshair className="w-2.5 h-2.5 text-emerald-600" />
+                          <span>GPS नोंदणीकृत (±{b.location_accuracy_meters ? Math.round(b.location_accuracy_meters) : 10}m)</span>
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-1 text-[10px] text-amber-700 font-medium mt-1">
+                          <AlertTriangle className="w-2.5 h-2.5 text-amber-500" />
+                          <span>GPS नोंद बाकी</span>
+                        </div>
+                      )}
                     </td>
                     <td className="px-5 py-3.5 text-slate-700 font-medium">{b.owner_name}</td>
                     <td className="px-5 py-3.5 text-slate-600">
@@ -625,6 +731,92 @@ export const Businesses: React.FC = () => {
                 />
               </div>
 
+              {/* GPS Location Capture Section */}
+              <div className="p-3.5 rounded-xl border border-blue-200 bg-blue-50/40 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5">
+                    <Crosshair className="w-4 h-4 text-brand-blue" />
+                    <span className="font-bold text-slate-800 text-xs">GPS लोकेशन मॅपिंग (Google Maps)</span>
+                  </div>
+                  {formData.latitude && formData.longitude ? (
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                      (formData.location_accuracy_meters || 0) <= 30
+                        ? 'bg-emerald-100 text-emerald-800'
+                        : (formData.location_accuracy_meters || 0) <= 80
+                        ? 'bg-amber-100 text-amber-800'
+                        : 'bg-rose-100 text-rose-800'
+                    }`}>
+                      ±{formData.location_accuracy_meters || 10}m अचूकता
+                    </span>
+                  ) : (
+                    <span className="text-[10px] text-slate-400 font-medium">नोंद बाकी</span>
+                  )}
+                </div>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={handleCaptureLocation}
+                    disabled={capturingLocation}
+                    className="flex items-center gap-1.5 px-3 py-2 bg-brand-blue hover:bg-brand-dark text-white rounded-lg text-xs font-semibold shadow-sm transition disabled:opacity-50"
+                  >
+                    <Navigation className={`w-3.5 h-3.5 ${capturingLocation ? 'animate-spin' : ''}`} />
+                    <span>{capturingLocation ? 'GPS स्थान शोधत आहे...' : formData.latitude ? 'पुन्हा अचूक GPS मिळवा (Recapture)' : '📍 सध्याचे अचूक GPS लोकेशन मिळवा'}</span>
+                  </button>
+
+                  {formData.latitude && formData.longitude && (
+                    <>
+                      <a
+                        href={`https://www.google.com/maps?q=${formData.latitude},${formData.longitude}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-1 px-2.5 py-2 border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-semibold transition"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5 text-brand-blue" />
+                        <span>Google Maps वर तपासा</span>
+                      </a>
+                      <button
+                        type="button"
+                        onClick={handleClearLocation}
+                        className="px-2.5 py-2 text-rose-600 hover:bg-rose-50 rounded-lg text-xs font-medium transition"
+                      >
+                        हटवा
+                      </button>
+                    </>
+                  )}
+                </div>
+
+                {formData.latitude && formData.longitude ? (
+                  <div className="space-y-2 pt-1 border-t border-blue-100">
+                    <div className="grid grid-cols-2 gap-2 text-[11px] font-mono text-slate-700 bg-white/70 p-2 rounded-lg border border-blue-100">
+                      <div>अक्षांश (Lat): <strong>{formData.latitude}</strong></div>
+                      <div>रेखांश (Lng): <strong>{formData.longitude}</strong></div>
+                    </div>
+                    {formData.location_accuracy_meters && formData.location_accuracy_meters > 80 && (
+                      <div className="flex items-start gap-1.5 p-2 rounded bg-amber-50 border border-amber-200 text-[11px] text-amber-800">
+                        <AlertTriangle className="w-3.5 h-3.5 text-amber-600 flex-shrink-0 mt-0.5" />
+                        <span>GPS अचूकता कमजोर (±{formData.location_accuracy_meters}m) आहे. कृपया दुकानाच्या बाहेर खुल्या आकाशाखाली पुन्हा लोकेशन मिळवा.</span>
+                      </div>
+                    )}
+                    <label className="flex items-start gap-2 pt-1 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.location_confirmed}
+                        onChange={(e) => setFormData({ ...formData, location_confirmed: e.target.checked })}
+                        className="mt-0.5 rounded text-brand-blue focus:ring-brand-blue"
+                      />
+                      <span className="text-[11px] text-slate-700 font-medium">
+                        मी या दुकानाच्या प्रत्यक्ष जागी उपस्थित राहून हे GPS लोकेशन नोंदवले असून ते अचूक आहे याची खात्री करतो.
+                      </span>
+                    </label>
+                  </div>
+                ) : (
+                  <p className="text-[11px] text-slate-500 leading-relaxed">
+                    ℹ️ दुकानाच्या प्रत्यक्ष जागेवर जाऊन वरील बटण दाबा. हे लोकेशन ॲपमधील नागरिकांना थेट गुगल मॅप्सवर दिशामार्ग दाखवण्यासाठी वापरले जाईल.
+                  </p>
+                )}
+              </div>
+
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">तपशील व सेवा वर्णन</label>
                 <textarea
@@ -772,6 +964,44 @@ export const Businesses: React.FC = () => {
                   <MapPin className="w-3.5 h-3.5 text-rose-500" /> पत्ता व स्थान
                 </p>
                 <p className="text-slate-800 text-xs leading-relaxed font-medium">{viewingBusiness.address}</p>
+              </div>
+
+              {/* GPS Location & Directions Card */}
+              <div className="p-3.5 rounded-xl bg-blue-50/60 border border-blue-200 space-y-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-[11px] font-semibold text-slate-600 uppercase tracking-wider flex items-center gap-1">
+                    <Compass className="w-3.5 h-3.5 text-brand-blue" /> GPS लोकेशन व थेट नेव्हिगेशन
+                  </p>
+                  {viewingBusiness.latitude && viewingBusiness.longitude ? (
+                    <span className="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-bold rounded-full">
+                      ✓ GPS पडताळणीकृत (±{viewingBusiness.location_accuracy_meters ? Math.round(viewingBusiness.location_accuracy_meters) : 10}m)
+                    </span>
+                  ) : (
+                    <span className="px-2 py-0.5 bg-amber-100 text-amber-800 text-[10px] font-bold rounded-full">
+                      ⚠️ GPS उपलब्ध नाही
+                    </span>
+                  )}
+                </div>
+                {viewingBusiness.latitude && viewingBusiness.longitude ? (
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
+                    <div className="text-[11px] font-mono text-slate-700 bg-white/70 px-2.5 py-1 rounded border border-blue-100">
+                      {viewingBusiness.latitude}, {viewingBusiness.longitude}
+                    </div>
+                    <a
+                      href={`https://www.google.com/maps/dir/?api=1&destination=${viewingBusiness.latitude},${viewingBusiness.longitude}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="px-3 py-1.5 bg-brand-blue hover:bg-brand-dark text-white rounded-lg font-semibold text-xs flex items-center gap-1 shadow-sm transition"
+                    >
+                      <Navigation className="w-3 h-3" />
+                      <span>Google Maps दिशामार्ग ↗</span>
+                    </a>
+                  </div>
+                ) : (
+                  <p className="text-[11px] text-slate-500">
+                    या व्यवसायासाठी अद्याप GPS नोंदणी केलेली नाही. 'संपादित करा' वर क्लिक करून GPS लोकेशन मिळवा.
+                  </p>
+                )}
               </div>
 
               {/* Description */}

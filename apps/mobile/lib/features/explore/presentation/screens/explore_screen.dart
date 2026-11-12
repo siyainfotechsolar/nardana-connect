@@ -209,6 +209,9 @@ class _ExploreScreenState extends ConsumerState<ExploreScreen> {
             'desc': row['description'] ?? '',
             'opening_hours': row['opening_hours'] ?? 'सकाळी ९:०० ते रात्री ८:००',
             'group': grp,
+            'latitude': row['latitude'],
+            'longitude': row['longitude'],
+            'location_accuracy_meters': row['location_accuracy_meters'],
           };
         }).toList();
 

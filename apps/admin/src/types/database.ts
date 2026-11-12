@@ -33,6 +33,12 @@ export interface Business {
   status: 'pending' | 'approved' | 'rejected';
   village_id: string;
   category_id: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  location_accuracy_meters?: number | null;
+  location_captured_at?: string | null;
+  location_verified_by?: string | null;
+  location_verified_at?: string | null;
   created_at: string;
 }
 

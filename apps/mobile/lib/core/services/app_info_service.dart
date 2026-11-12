@@ -22,8 +22,8 @@ class AppInfoService {
       _info = PackageInfo(
         appName: 'NARDANA CONNECT',
         packageName: 'in.nardana.connect.nardana_connect',
-        version: '1.0.1',
-        buildNumber: '2',
+        version: '1.0.3',
+        buildNumber: '4',
         buildSignature: '',
       );
     }
@@ -31,8 +31,8 @@ class AppInfoService {
   }
 
   String get appName => _info?.appName.isNotEmpty == true ? _info!.appName : 'NARDANA CONNECT';
-  String get version => _info?.version.isNotEmpty == true ? _info!.version : '1.0.1';
-  String get buildNumber => _info?.buildNumber.isNotEmpty == true ? _info!.buildNumber : '2';
+  String get version => _info?.version.isNotEmpty == true ? _info!.version : '1.0.3';
+  String get buildNumber => _info?.buildNumber.isNotEmpty == true ? _info!.buildNumber : '4';
   String get packageName => _info?.packageName.isNotEmpty == true ? _info!.packageName : 'in.nardana.connect.nardana_connect';
   String get platform => 'Android';
 

@@ -33,6 +33,7 @@ import 'package:nardana_connect/features/vehicles/presentation/screens/vehicle_r
 import 'package:nardana_connect/features/vehicles/presentation/screens/vehicle_detail_screen.dart';
 import 'package:nardana_connect/features/vehicles/presentation/screens/submit_vehicle_screen.dart';
 import 'package:nardana_connect/features/legal/presentation/screens/disclaimer_screen.dart';
+import 'package:nardana_connect/features/bus/presentation/screens/bus_timetable_screen.dart';
 
 final appRouter = GoRouter(
   initialLocation: '/',
@@ -211,6 +212,10 @@ final appRouter = GoRouter(
     GoRoute(
       path: '/disclaimer',
       builder: (context, state) => const DisclaimerScreen(),
+    ),
+    GoRoute(
+      path: '/bus-timetable',
+      builder: (context, state) => const BusTimetableScreen(),
     ),
   ],
 );

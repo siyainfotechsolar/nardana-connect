@@ -38,6 +38,13 @@ class BusinessDetailScreen extends StatelessWidget {
     }
   }
 
+  Future<void> _openDirections(double lat, double lng) async {
+    final uri = Uri.parse('https://www.google.com/maps/dir/?api=1&destination=$lat,$lng');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -51,6 +58,26 @@ class BusinessDetailScreen extends StatelessWidget {
     final address = business['address'] ?? 'मुख्य बाजारपेठ, $village';
     final desc = business['desc'] ?? business['description'] ?? 'उत्कृष्ट सेवा आणि वाजवी दर.';
     final hours = business['opening_hours'] ?? 'सकाळी ९:०० ते रात्री ८:००';
+
+    double? lat;
+    double? lng;
+    if (business['latitude'] != null) {
+      lat = (business['latitude'] as num).toDouble();
+    }
+    if (business['longitude'] != null) {
+      lng = (business['longitude'] as num).toDouble();
+    }
+    final bool hasValidGps = lat != null &&
+        lng != null &&
+        lat >= -90.0 &&
+        lat <= 90.0 &&
+        lng >= -180.0 &&
+        lng <= 180.0 &&
+        (lat != 0.0 || lng != 0.0);
+
+    final String accuracyText = business['location_accuracy_meters'] != null
+        ? '±${(business['location_accuracy_meters'] as num).round()}m'
+        : '±10m';
 
     return AppBackScope(
       fallbackRoute: '/explore',
@@ -387,6 +414,43 @@ class BusinessDetailScreen extends StatelessWidget {
                       height: 1.4,
                     ),
                   ),
+
+                  if (hasValidGps) ...[
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () => _openDirections(lat!, lng!),
+                        icon: const Icon(Icons.directions_rounded, size: 20, color: Colors.white),
+                        label: Text(
+                          'गुगल मॅप्स दिशामार्ग (Get Directions)',
+                          style: GoogleFonts.mukta(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 11, horizontal: 16),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          elevation: 2,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        const Icon(Icons.verified_rounded, size: 14, color: AppColors.secondaryGreen),
+                        const SizedBox(width: 4),
+                        Text(
+                          'GPS पडताळणीकृत ($accuracyText) • थेट Google Maps नेव्हिगेशन',
+                          style: GoogleFonts.mukta(fontSize: 11, color: AppColors.textSecondary),
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),
